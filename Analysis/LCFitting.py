@@ -70,8 +70,8 @@ def LCpolyFit(t, M, M_err=None, order=6, N=None, plot=False):
             x2dof = np.sum(np.square((Mt-LC)/M_err))/(len(LC)-len(popt))
             #check fit
             if x2dof > 10:
-                print j, x2dof
-                print ','.join([str(term) for term in popt])
+                print((j, x2dof))
+                print((','.join([str(term) for term in popt])))
         
             #generate continuous light curve
             ta = np.linspace(min(t),max(t),1000)
@@ -185,8 +185,8 @@ def LCSN1aFit(t, M, M_err=None, p0=None, N=30, plot=False):
             x2dof = np.sum(np.square((Mt-LC)/M_err))/(len(LC)-len(popt))
             #check fit
             if x2dof > 10:
-                print j, x2dof
-                print ','.join([str(term) for term in popt])
+                print((j, x2dof))
+                print((','.join([str(term) for term in popt])))
         
             #generate continuous light curve
             ta = np.linspace(min(t),max(t),1000)

@@ -71,7 +71,7 @@ def genFits(filename):
     Input------------------------------
     filename  : name of HDUlist
     """
-    print "gen"
+    print("gen")
 
 
 

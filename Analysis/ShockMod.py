@@ -123,7 +123,7 @@ def ShockCoolingMod(t_day,R8,T5,m_c=1,late=True):
     return Lsh, Tsh #erg/s, K
 
 def ShockCoolingFit(t_day, wave, z, DM, m_c, R8, T5, t0, late=True):
-    from SEDAnalysis import BBflux
+    from .SEDAnalysis import BBflux
     #shift time to rest frame
     t_rest = t_day/(1+z) - t0
     #calculate shock cooling luminosity in rest frame
@@ -135,8 +135,8 @@ def ShockCoolingFit(t_day, wave, z, DM, m_c, R8, T5, t0, late=True):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def ShockCoolingMultiErr(p, t, L, L_err, z, DM, Mej):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #Shock cooling component p0=epoch (in rest frame), p1=R8
     #Fix t5=0.1 temperature, because assume late time
     B_pred = np.array([ShockCoolingFit(ti, wave_0[bands['B']], z, DM, Mej,
@@ -160,8 +160,8 @@ def ShockCoolingMultiErr(p, t, L, L_err, z, DM, Mej):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def ShockCoolingViErr(p, t, L, L_err, z, DM, Mej):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #Shock cooling component p0=epoch (in rest frame), p1=R8
     #Fix t5=0.1 temperature, because assume late time
     V_pred = np.array([ShockCoolingFit(ti, wave_0[bands['V']], z, DM, Mej,
@@ -215,7 +215,7 @@ def Kasen2010(t_day,a13,m_c=1,e_51=1,kappa=1.0):
 #function: Kasen fitting functyion
 def KasenFit(t_day,a13,kappa,wave,z,m_c,e_51,DM,t0):
     #essential imports
-    from SEDAnalysis import BBflux
+    from .SEDAnalysis import BBflux
     
     #shift time to rest frame
     t_rest = t_day/(1+z) - t0
@@ -234,8 +234,8 @@ def Kasen_isocorr(theta):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def kasenMultiErr(p, t, L, L_err, z, DM, m_c, e_51):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #Kasen component p0=epoch (in rest frame), p1=a13, p2=theta
     B_pred = np.array([KasenFit(ti, p[1], 1.0, wave_0[bands['B']], z,
                                 m_c, e_51, DM, p[0])
@@ -258,8 +258,8 @@ def kasenMultiErr(p, t, L, L_err, z, DM, m_c, e_51):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def kasenFixedMultiErr(p, t, L, L_err, z, DM, m_c, e_51, angle):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #Kasen component p0=epoch (in rest frame), p1=a13, p2=theta
     B_pred = np.array([KasenFit(ti, p[1], 1.0, wave_0[bands['B']], z,
                                 m_c, e_51, DM, p[0])
@@ -282,8 +282,8 @@ def kasenFixedMultiErr(p, t, L, L_err, z, DM, m_c, e_51, angle):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def kasenPowMultiErr(p, t, L, L_err, z, DM, m_c, e_51, sep, angle):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #Kasen component p0=epoch (in rest frame), p1=a13, p2=theta
     B_pred = np.array([KasenFit(ti, sep, 1.0, wave_0[bands['B']], z,
                                 m_c, e_51, DM, p[0])
@@ -306,8 +306,8 @@ def kasenPowMultiErr(p, t, L, L_err, z, DM, m_c, e_51, sep, angle):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def kasenViErr(p, t, L, L_err, z, DM, m_c, e_51):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #Kasen component p0=epoch (in rest frame), p1=a13, p2=theta
     V_pred = np.array([KasenFit(ti, p[1], 1.0, wave_0[bands['V']], z,
                                 m_c, e_51, DM, p[0])
@@ -418,7 +418,7 @@ def CSMmod(t_day, Eej, Mej, Mext, Rext):
     return Lcsm, Tcsm
 
 def CSMFit(t_day, wave, z, DM, Mej, Eej, Mext, Rext, t0):
-    from SEDAnalysis import BBflux
+    from .SEDAnalysis import BBflux
     #shift time to rest frame
     t_rest = t_day/(1+z) - t0
     #calculate CSM luminosity in rest frame
@@ -430,8 +430,8 @@ def CSMFit(t_day, wave, z, DM, Mej, Eej, Mext, Rext, t0):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def CSMMultiErr(p, t, L, L_err, z, DM, Mej, Eej):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #CSM component p0=epoch (in rest frame), p1=Mext, p2=Rext
     B_pred = np.array([CSMFit(ti, wave_0[bands['B']], z, DM, Mej, Eej,
                               p[1], p[2], p[0]) for ti in t[0]])
@@ -451,8 +451,8 @@ def CSMMultiErr(p, t, L, L_err, z, DM, Mej, Eej):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def CSMViErr(p, t, L, L_err, z, DM, Mej, Eej):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #CSM component p0=epoch (in rest frame), p1=Mext, p2=Rext
     V_pred = np.array([CSMFit(ti, wave_0[bands['V']], z, DM, Mej, Eej,
                               p[1], p[2], p[0]) for ti in t[0]])
@@ -472,7 +472,7 @@ def CSMViErr(p, t, L, L_err, z, DM, Mej, Eej):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def CompMultiErr(p, t, L, L_err, z, DM, m_c, e_51, tbase, Lbase):
-    from Cosmology import wave_0, bands
+    from .Cosmology import wave_0, bands
     #Kasen component p0=epoch (in rest frame), p1=a13, p2=theta
     B_pred = np.array([KasenFit(ti, p[1], 1.0, wave_0[bands['B']],
                                 m_c, e_51, z, DM, p[0])

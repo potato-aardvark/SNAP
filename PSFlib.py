@@ -19,7 +19,8 @@ def dist(x1, y1, x2, y2):
 ###############################################
 
 #function: general 2D background sky plane
-def D2plane((x, y), a, b, c):
+def D2plane(xxx_todo_changeme, a, b, c):
+    (x, y) = xxx_todo_changeme
     return (a*x + b*y + c).ravel()
 
 ###############################################
@@ -27,7 +28,8 @@ def D2plane((x, y), a, b, c):
 ###############################################
 
 #function: circular 2D moffat function
-def S2moff((x, y), A, a, b, x0, y0):
+def S2moff(xxx_todo_changeme1, A, a, b, x0, y0):
+    (x, y) = xxx_todo_changeme1
     m = A*np.power(1+np.square(dist(x,y,x0,y0)/a),-b)
     return m.ravel()
 #function: moffat a, b paramters -> fwhm
@@ -84,7 +86,7 @@ def E2ap_get(image, x0, y0, ax, ay, theta, r1, r2):
     apy = np.array([y for x in xaxis for y in yaxis if (Mdist(x,y,x0,y0,ax,ay,theta)<=r2 and Mdist(x,y,x0,y0,ax,ay,theta)>=r1)])
     return api, apx, apy
 #function: elliptical 2D moffat function
-def E2moff((x, y), A, ax, ay, b, theta, x0, y0):
+def E2moff(xxx_todo_changeme2, A, ax, ay, b, theta, x0, y0):
     """
     This is the most frequently used function to model PSFs,
     but it is not perfect! Expect residuals!
@@ -96,6 +98,7 @@ def E2moff((x, y), A, ax, ay, b, theta, x0, y0):
     rotated counterclockwise by angle theta in radians
     centered at position x0, y0, with sharpness b, scaling A.
     """
+    (x, y) = xxx_todo_changeme2
     m = A*np.power(1+np.square(Mdist(x,y,x0,y0,ax,ay,theta)),-b)
     return m.ravel()
 #function: integrate elliptical moffat function
@@ -230,7 +233,7 @@ def Sersic_integrate(Ie,re,n,e,f=0.9):
             elif I_diff>=0.00001:
                 b_test=b_test*b_irate
             bn = b_test
-        print "n={} --> b(n)={}".format(n, bn)
+        print("n={} --> b(n)={}".format(n, bn))
     return np.pi*re**2*Ie*2*n*gamma(2*n)*np.power(np.e, bn)/np.power(bn, 2*n)*f
     
 
@@ -239,7 +242,8 @@ def Sersic_integrate(Ie,re,n,e,f=0.9):
 ###############################################
         
 #function: Composite moffat psf for multiple objects
-def E2moff_multi((x,y), psftype, given, free):
+def E2moff_multi(xxx_todo_changeme3, psftype, given, free):
+    (x,y) = xxx_todo_changeme3
     out = 0
     count = 0
     for i, psf in enumerate(psftype):

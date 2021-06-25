@@ -83,7 +83,7 @@ def SBcorrectMag(ts, mags, errs, tcorr, Scorr, tdiv=0, interp='GP',
                      bounds=bounds, args=(Scorr, gp))
         gp.set_parameter_vector(r.x)
         gp.get_parameter_dict()
-        print r.x
+        print((r.x))
         #predict using gaussian process
         scorr, scorr_var = gp.predict(Scorr, tcs[Bcol][mask])
     else:
@@ -97,7 +97,7 @@ def SBcorrectMag(ts, mags, errs, tcorr, Scorr, tdiv=0, interp='GP',
     mask = [ts[Bcol]<tdiv]
     #correct B band using Bout = (Bout-Vin)*c + Bin
     if interp == 'GP':
-        from SEDAnalysis import SEDinterp
+        from .SEDAnalysis import SEDinterp
         #Construct V band Gaussian Process interpolator
         gp = SEDinterp(ts[Vcol][0], ['V'], [ts[Vcol]],
                        [mags[Vcol]], [errs[Vcol]], retGP=True)[0]
@@ -244,12 +244,12 @@ def BVcorrectFlux(ts, mags, errs, te, Fe, SNe, plot=True):
     perr = np.sqrt(np.diag(pcov))
     #color at flux epochs
     BVe = popt[0]*te[0] + popt[1]
-    print popt, perr
+    print((popt, perr))
     BVe_err = np.sqrt(perr[1]**2 + (te[0]*perr[0])**2)
     #plot fit
     if plot:
         import matplotlib.pyplot as plt
-        print "Plotting color interpolation"
+        print("Plotting color interpolation")
         plt.title("B-V fit interpolation")
         plt.errorbar(tBV, BV, yerr=BV_err, fmt='k-')
         plt.errorbar(te[0], BVe, yerr=BVe_err, fmt='g-')
@@ -330,7 +330,7 @@ def SIcorrectMag(ts, mags, errs, tcorr, Scorr, tdiv=0, interp='GP',
                      bounds=bounds, args=(Scorr, gp))
         gp.set_parameter_vector(r.x)
         gp.get_parameter_dict()
-        print r.x
+        print((r.x))
         #predict using gaussian process
         scorr, scorr_var = gp.predict(Scorr, tcs[Icol][mask])
     else:
@@ -344,7 +344,7 @@ def SIcorrectMag(ts, mags, errs, tcorr, Scorr, tdiv=0, interp='GP',
     mask = [ts[Icol]<tdiv]
     #correct B band using Bout = (Bout-Vin)*c + Bin
     if interp == 'GP':
-        from SEDAnalysis import SEDinterp
+        from .SEDAnalysis import SEDinterp
         #Construct V band Gaussian Process interpolator
         gp = SEDinterp(ts[Vcol][0], ['V'], [ts[Vcol]],
                        [mags[Vcol]], [errs[Vcol]], retGP=True)[0]

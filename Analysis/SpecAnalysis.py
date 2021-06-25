@@ -30,7 +30,7 @@ def spec_fits(filename, get_err=False, get_meta=False):
         spec = spec_fits[1]
         if get_err:
             spec_err = spec_fits[3]
-        print spec_meta['SITEID']
+        print((spec_meta['SITEID']))
     else:
         spec = spec_fits
     #spectrum flux data
@@ -277,7 +277,7 @@ def fitLine(center, width, spec, spec_err=None, plot=False):
     
     est = [-1.5, center, width/2.0, 3, b_est]
     est = [min(spec_flux)-b_est, center, width/2.0, 3, b_est]
-    print est
+    print(est)
     if spec_err is None:
         popt, pcov = curve_fit(lpNorm, spec_wave, spec_flux, p0=est,
                                maxfev=100000)
@@ -287,7 +287,7 @@ def fitLine(center, width, spec, spec_err=None, plot=False):
                                sigma=spec_flux_err, maxfev=100000)
     perr = np.sqrt(np.diag(pcov))
     min_wave = minimize(lambda x: 1e20*lpNorm(x, *popt), [popt[1]])['x'][0]
-    print popt
+    print(popt)
     #plot best fit
     if plot:
         import matplotlib.pyplot as plt
@@ -357,7 +357,7 @@ def fitNaID(spec, spec_err=None, r=15, z=0, plot=False):
     #fitting doublet profile
     est = [0.4, 0.8, line2, -1.0,
            0.4, 0.8, line1, -0.5, 0, b_est]
-    print est
+    print(est)
     if spec_err is None:
         popt, pcov = curve_fit(DVoigt, spec_wave[mask], spec_flux[mask],
                                p0=est, maxfev=1000000)
@@ -367,7 +367,7 @@ def fitNaID(spec, spec_err=None, r=15, z=0, plot=False):
                                p0=est, sigma=spec_flux_err[mask],
                                maxfev=1000000)
     perr = np.sqrt(np.diag(pcov))
-    print popt, perr
+    print((popt, perr))
 
     #calculate equivalent widths
     wave2 = np.linspace(line2-r, line2+r, 1000)
@@ -379,16 +379,16 @@ def fitNaID(spec, spec_err=None, r=15, z=0, plot=False):
     V1 = Voigt(wave1, popt[4], popt[5], popt[6], popt[7])
     backg1 = popt[9] + popt[8] * wave1
     EW1 = np.trapz(-V1/backg1, wave1)
-    print "D2: EW =",EW2
-    print "D1: EW =",EW1
+    print(("D2: EW =",EW2))
+    print(("D1: EW =",EW1))
 
     #calculate galactic extinction from Poznanski et al. 2012
     EBV2 = np.power(10, 2.16*EW2-1.91)
     err2 = EBV2*np.log(10)*0.15
     EBV1 = np.power(10, 2.47*EW1-1.76)
     err1 = EBV1*np.log(10)*0.17
-    print "D2: E(B-V) =",np.power(10, 2.16*EW2-1.91),err2
-    print "D1: E(B-V) =",np.power(10, 2.47*EW1-1.76),err1
+    print(("D2: E(B-V) =",np.power(10, 2.16*EW2-1.91),err2))
+    print(("D1: E(B-V) =",np.power(10, 2.47*EW1-1.76),err1))
 
     #plotting the fit
     if plot:
@@ -425,7 +425,7 @@ def EWdirect(spec, lim1, lim2, r=20, spec_err=None, plot=False):
     cont_flux = np.polyval(cont_poly, spec_wave[lmask])
     ratio = (cont_flux - spec_flux[lmask])/cont_flux
     EW = np.trapz(ratio, spec_wave[lmask])
-    print "EW:", EW
+    print(("EW:", EW))
 
     #plotting the fit
     if plot:

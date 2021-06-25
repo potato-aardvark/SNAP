@@ -15,7 +15,7 @@ def Bcol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catM
     #essential extra imports
     from scipy.optimize import curve_fit
     from SNAP.Analysis.LCFitting import linfunc
-    import Catalog as ctlg
+    from . import Catalog as ctlg
     #load V band data
     if cat == 'aavso':
         fovam = 2.0*radius*0.4/60.0 #arcmin radius in KMT scaling
@@ -69,7 +69,7 @@ def Bcol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catM
     w = 1/np.square(BV_err)
     BV_mean = np.sum(BV*w)/np.sum(w)
     BV_merr = np.sqrt(1/np.sum(w))
-    print "Average color (B-V):", BV_mean, "+/-", BV_merr 
+    print("Average color (B-V):", BV_mean, "+/-", BV_merr) 
     
     #make color correlation plot
     if plot:
@@ -90,9 +90,9 @@ def Bcol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catM
                                sigma=dI_err[mask],absolute_sigma=True)
         perr = np.sqrt(np.diag(pcov))
         colsol = linfunc(BV[mask], *popt)
-        print "Color correlation:",popt, perr
-        print "Nstar:",len(BV[mask])
-        print "Pearson:",np.corrcoef(BV[mask],dI[mask])
+        print("Color correlation:",popt, perr)
+        print("Nstar:",len(BV[mask]))
+        print("Pearson:",np.corrcoef(BV[mask],dI[mask]))
         plt.plot(BV[mask], colsol, zorder=2)
         plt.ylabel("B - inst")
         plt.xlabel("B - V")
@@ -107,7 +107,7 @@ def Icol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catM
     #essential extra imports
     from scipy.optimize import curve_fit
     from SNAP.Analysis.LCFitting import linfunc
-    import Catalog as ctlg
+    from . import Catalog as ctlg
     #fetch V band magnitudes
     if cat == 'phot':
         IDV, RAV, DECV, catMV, catMerrV = ctlg.catPhot(catname,band='V')
@@ -144,7 +144,7 @@ def Icol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catM
     w = 1/np.square(VI_err)
     VI_mean = np.sum(VI*w)/np.sum(w)
     VI_merr = np.sqrt(1/np.sum(w))
-    print "Average color (V-I):", VI_mean, "+/-", VI_merr 
+    print("Average color (V-I):", VI_mean, "+/-", VI_merr) 
 
     #make color correlation plot
     if plot:
@@ -165,9 +165,9 @@ def Icol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catM
                                sigma=dI_err[mask],absolute_sigma=True)
         perr = np.sqrt(np.diag(pcov))
         colsol = linfunc(VI[mask], *popt)
-        print "Color correlation:",popt, perr
-        print "Nstar:",len(VI[mask])
-        print "Pearson:",np.corrcoef(VI[mask],dI[mask])
+        print("Color correlation:",popt, perr)
+        print("Nstar:",len(VI[mask]))
+        print("Pearson:",np.corrcoef(VI[mask],dI[mask]))
         plt.plot(VI[mask], colsol, zorder=2)
         plt.ylabel("i - inst")
         plt.xlabel("V - i")

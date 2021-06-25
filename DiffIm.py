@@ -125,8 +125,8 @@ def basic_diff_image(src_name, ref_name, out_name, conv_name, tmpdir="DITemp", d
         #subtract remapped reference file from source file
         subprocess.call(default_flags)
 
-        print "SUBTRACTION COMPLETE"
-        print "output:",out_name
+        print("SUBTRACTION COMPLETE")
+        print("output:",out_name)
         
     finally:
         if delete_temp:
@@ -166,8 +166,8 @@ def make_diff_image(src_name, ref_name, out_name, conv_name, fwhm=None, imx=3692
         #subtract remapped reference file from source file
         run_hotpants(*args)
 
-        print "SUBTRACTION COMPLETE"
-        print "output:",out_name
+        print("SUBTRACTION COMPLETE")
+        print("output:",out_name)
         
     finally:
         if delete_temp:

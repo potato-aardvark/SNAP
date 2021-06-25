@@ -11,8 +11,8 @@
 import numpy as np 
 
 #essential imports
-from Astrometry import*
-from Vizier import*
+from .Astrometry import*
+from .Vizier import*
 
 #linear photometric solution
 def linMatch(x, a, b, x_err=0, a_err=0, b_err=0):
@@ -37,7 +37,7 @@ def matchSExPhot(catname, band, refname=None, fitsname=None, pos=None, verbosity
     
     #get centroid positions in image from SExtractor Catalog
     if verbosity > 1:
-        print "Loading SExtractor Catalog"
+        print("Loading SExtractor Catalog")
     N, F, F_err, RA, DEC = np.loadtxt(catname, unpack=True)
     #fitting will be in log axes
     F_err = F_err/(F*np.log(10.0))
@@ -47,7 +47,7 @@ def matchSExPhot(catname, band, refname=None, fitsname=None, pos=None, verbosity
 
     if refname is not None:
         if verbosity > 1:
-            print "Reference Catalog Provided"
+            print("Reference Catalog Provided")
         f = open(refname, 'r')
         s = f.read()
         f.close()
@@ -55,7 +55,7 @@ def matchSExPhot(catname, band, refname=None, fitsname=None, pos=None, verbosity
         name,rad,ded,rmag = aavso_static(s,band)
     elif fitsname is not None:
         if verbosity > 1:
-            print "Fits image field coordinates provided, searching AAVSO"
+            print("Fits image field coordinates provided, searching AAVSO")
         #import fits image corresponding to catalog 
         s1 = fits.open(fitsname)
         # Read central pixel from the FITS file
@@ -70,15 +70,15 @@ def matchSExPhot(catname, band, refname=None, fitsname=None, pos=None, verbosity
         name,rad,ded,rmag,s = aavso(radeg,decdeg,fovam,band,out=True)
     elif pos is not None:
         if verbosity > 1:
-            print "Field coordinates provided, searching AAVSO"
+            print("Field coordinates provided, searching AAVSO")
         #Query AAVSO catalog
         name,rad,ded,rmag,s = aavso(pos[0],pos[1],fovam,band,out=True)
     else:
-        print "Insufficient information to retrieve AAVSO catalog, try -h flag and give one of three optional arguments."
+        print("Insufficient information to retrieve AAVSO catalog, try -h flag and give one of three optional arguments.")
         return
 
     if verbosity > 1:
-            print "Matching star fields"
+            print("Matching star fields")
     wh = np.where(rmag < 16.0)[0] # select only bright stars r < 16 mag.
     rad, ded, rmag = rad[wh], ded[wh], rmag[wh]
     wh = np.where(rmag > 14.0)[0] # select only unsaturated stars r > 14 mag.
@@ -104,7 +104,7 @@ def matchSExPhot(catname, band, refname=None, fitsname=None, pos=None, verbosity
     Fm_err = np.array(Fm_err)
 
     if verbosity > 1:
-        print "Fitting AAVSO magnitude to SExtractor flux"
+        print("Fitting AAVSO magnitude to SExtractor flux")
     #fit photometric solution
     popt, pcov = curve_fit(lin, magm, Fm, sigma = Fm_err)
     perr = np.sqrt(np.diag(pcov))
@@ -118,10 +118,10 @@ def matchSExPhot(catname, band, refname=None, fitsname=None, pos=None, verbosity
     X2dof = np.sum(np.square((Mfit-magm)/Mfit_err))/(len(Mfit)-2.0)
 
     if verbosity > 1:
-        print "Linear Photmetric Solution: "+str(popt)
-        print "Errors: "+str(perr)
-        print "Fit X2/dof: "+str(X2dof)
-        print "Writing photometric fit parameters"
+        print("Linear Photmetric Solution: "+str(popt))
+        print("Errors: "+str(perr))
+        print("Fit X2/dof: "+str(X2dof))
+        print("Writing photometric fit parameters")
     #get base of catalog name for output
     base = catname[:-4]
     
@@ -144,7 +144,7 @@ def matchSExPhot(catname, band, refname=None, fitsname=None, pos=None, verbosity
 
     if verbosity > 0:
         if verbosity > 1:
-            print "Writing Catalog with corrected magnitudes"
+            print("Writing Catalog with corrected magnitudes")
 
         #compute corrected magnitudes for all objects in SExtractor catalog
         M, M_err = linMatch(F, popt[0], popt[1], F_err, perr[0], perr[1])
@@ -209,20 +209,20 @@ if __name__ == "__main__":
     if args.refname is not None:
         #compute photometric solution
         popt, perr = matchPhot(args.catname, args.band, refname=args.refname, verbosity=args.verbosity)
-        print "Linear Photmetric Solution: "+str(popt)
-        print "Errors: "+str(perr)
+        print("Linear Photmetric Solution: "+str(popt))
+        print("Errors: "+str(perr))
     elif args.fitsname is not None:
         #compute photometric solution
         popt, perr = matchPhot(args.catname, args.band, fitsname=args.fitsname, verbosity=args.verbosity)
-        print "Linear Photmetric Solution: "+str(popt)
-        print "Errors: "+str(perr)
+        print("Linear Photmetric Solution: "+str(popt))
+        print("Errors: "+str(perr))
     elif args.position is not None:
         #extract RA, DEC from position argument
         RA, DEC = [float(coord) for coord in args.position.split(':')]
         pos = [RA, DEC]
         #compute photometric solution
         popt, perr = matchPhot(args.catname, args.band, pos=pos, verbosity=args.verbosity)
-        print "Linear Photmetric Solution: "+str(popt)
-        print "Errors: "+str(perr)
+        print("Linear Photmetric Solution: "+str(popt))
+        print("Errors: "+str(perr))
     else:
-        print "Insufficient information to retrieve AAVSO catalog, try -h flag and give one of three optional arguments."
+        print("Insufficient information to retrieve AAVSO catalog, try -h flag and give one of three optional arguments.")

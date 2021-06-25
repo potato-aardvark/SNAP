@@ -13,7 +13,7 @@ import numpy as np
 #function: load AAVSO catalog from online
 def catAAVSO(radeg,decdeg,fovam,band,out=False):
     import os
-    from Vizier import aavso, aavso_static
+    from .Vizier import aavso, aavso_static
 
     #output file supplied?
     if out:
@@ -106,7 +106,7 @@ def catDPRS(catname, band=False):
 def catPhot(catname,band=False):
     #load values with phot conventions
     RA,RAerr,DEC,DECerr,Nobs,V,Verr,B,Berr,g,gerr,r,rerr,i,ierr = np.loadtxt(catname, unpack=True, skiprows=2, delimiter=",", dtype='string')
-    ID = range(len(RA))
+    ID = list(range(len(RA)))
 
     #standard phot filters
     bands = {'V':0,'B':1,'G':2,'R':3,'I':4}

@@ -15,7 +15,7 @@ import numpy as np
 
 #function: mask a list
 def lmask(lst, msk):
-    return [lst[i] for i in xrange(len(msk)) if msk[i]]
+    return [lst[i] for i in range(len(msk)) if msk[i]]
 
 #Gaussian process negative log likelihood minimizer
 def neg_log_like(params, y, gp):
@@ -35,14 +35,14 @@ def SEDinterp(t, bands, SED_ts, SED_lcs, SED_errs=None,
     #check if number of light curves given is same as number of wavelengths
     Nw = len(bands)
     if len(SED_ts)!= Nw or len(SED_lcs) != Nw:
-        print "Must give one light curve for each wavelength specified."
+        print("Must give one light curve for each wavelength specified.")
         return
     if bandmask is None:
         bandmask = np.ones(Nw).astype(bool)
     #check coverage
     for i in range(Nw):
         if t > max(SED_ts[i]) or t < min(SED_ts[i]):
-            print "Incomplete coverage in lc "+str(i)+", masking..."
+            print(("Incomplete coverage in lc "+str(i)+", masking..."))
             bandmask[i] = False
     #check if some bands are masked
     SED_ts = lmask(SED_ts, bandmask)
@@ -57,7 +57,7 @@ def SEDinterp(t, bands, SED_ts, SED_lcs, SED_errs=None,
         flux_errs = np.zeros(Nm)
         #Gaussian Process requires errors to be given
         if SED_errs is None:
-            print "GP option requires input errorbars."
+            print("GP option requires input errorbars.")
             return
         gps = []
         for i in range(Nm):
@@ -69,8 +69,8 @@ def SEDinterp(t, bands, SED_ts, SED_lcs, SED_errs=None,
             gp = george.GP(kernel, mean=mu)
             # You always need to call compute once.
             gp.compute(SED_ts[i], SED_errs[i])
-            print("Initial log likelihood: {0}".format(
-                gp.log_likelihood(SED_lcs[i])))
+            print(("Initial log likelihood: {0}".format(
+                gp.log_likelihood(SED_lcs[i]))))
             initial_params = gp.get_parameter_vector()
             bounds = gp.get_parameter_bounds()
             #train gaussian process
@@ -78,7 +78,7 @@ def SEDinterp(t, bands, SED_ts, SED_lcs, SED_errs=None,
                          bounds=bounds, args=(SED_lcs[i], gp))
             gp.set_parameter_vector(r.x)
             gp.get_parameter_dict()
-            print("GP trained parameters: {0}".format(r.x))
+            print(("GP trained parameters: {0}".format(r.x)))
             gps.append(gp)
         if retGP:
             #return gaussian process
@@ -282,8 +282,8 @@ def fitBlackbod(waves, fluxes, fluxerrs=None, plot=False, ptitle=""):
     if plot:
         import matplotlib.pyplot as plt
 
-        print "Temperature [K]:", T, Terr
-        print "Received/Emitted:", r, rerr
+        print(("Temperature [K]:", T, Terr))
+        print(("Received/Emitted:", r, rerr))
         if fluxerrs is not None:
             plt.errorbar(waves, fluxes, yerr=fluxerrs, fmt='g+')
         else:

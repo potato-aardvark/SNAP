@@ -41,7 +41,7 @@ def phot_sol(insMags, insMagerrs, catMags, catMagerrs):
     popt, pcov = curve_fit(linfunc,catMags,insMags,p0=[1,-29.1])
     perr = np.sqrt(np.diag(pcov))
     photsol = linfunc(catMags, *popt)
-    print "Photometric solution:",popt, perr
+    print("Photometric solution:",popt, perr)
     plt.plot(catMags, photsol, zorder=2)
     plt.ylabel("-2.5 log I")
     plt.xlabel("Mag (catalog)")

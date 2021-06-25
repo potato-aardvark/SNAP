@@ -63,12 +63,12 @@ def loadFits(filename, year=2016, getwcs=False, gethdr=False, verbosity=0):
     from astropy.time import Time
     from astropy.wcs import WCS
 
-    from Astrometry import isot_day
+    from .Astrometry import isot_day
     
     try: #try to load image data
         #load HDU image
         if verbosity > 0:
-            print "loading hdu"
+            print("loading hdu")
         hdulist = fits.open(filename)
         info = hdulist.info()
         image = hdulist[0].data
@@ -92,7 +92,7 @@ def loadFits(filename, year=2016, getwcs=False, gethdr=False, verbosity=0):
     if getwcs:
         try: #try to load WCS
             if verbosity > 0:
-                print "loading world coordinate system"
+                print("loading world coordinate system")
             wcs = WCS(filename)
             retlist += [wcs]
         except:
@@ -101,7 +101,7 @@ def loadFits(filename, year=2016, getwcs=False, gethdr=False, verbosity=0):
         retlist += [header]
     return retlist
 
-def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_intens=None, aperture=None, psf='1', name='object', band='V', fwhm=5.0, limsnr=3.0, satmag=14.0, refmag=19.0, fitsky=True, satpix=40000.0, verbosity=0, diagnosis=False):
+def magnitude(image, catimage, wcs, cat, catname, xxx_todo_changeme, radius=500, over_intens=None, aperture=None, psf='1', name='object', band='V', fwhm=5.0, limsnr=3.0, satmag=14.0, refmag=19.0, fitsky=True, satpix=40000.0, verbosity=0, diagnosis=False):
     """
     #####################################################################
     # Desc: Compute magnitude of object in image using ref catalog.     #
@@ -150,15 +150,14 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
     #       mlim; float detection limit at source position.             #
     #####################################################################
     """
-    
-    #essential functions
-    import Catalog as ctlg
-    import PSFlib as plib
-    import Photometry as pht
-    from Analysis.Cosmology import bands, flux_0
+    (RAo,DECo) = xxx_todo_changeme
+    from . import Catalog as ctlg
+    from . import PSFlib as plib
+    from . import Photometry as pht
+    from .Analysis.Cosmology import bands, flux_0
 
     #Single object? Generalize to multiple object. (Compatibility)
-    if not hasattr(name, '__iter__'):
+    if  isinstance(name, str):
         #Make all listable objects into list
         name = [name]
         RAo = [RAo]
@@ -175,11 +174,11 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
     for i in range(Nobj):
         Xo[i], Yo[i] = wcs.all_world2pix(RAo[i], DECo[i], 0)
         if verbosity > 0:
-            print "Source "+str(i+1)+" located at: "+str(Xo[i])+", "+str(Yo[i])
+            print("Source "+str(i+1)+" located at: "+str(Xo[i])+", "+str(Yo[i]))
     
     #load photometric reference stars catalog
     if verbosity > 0:
-        print "loading catalog"
+        print("loading catalog")
     if cat == 'phot':
         ID, RA, DEC, catM, catMerr = ctlg.catPhot(catname,band=band)
     elif cat == 'dprs':
@@ -190,7 +189,7 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
         fovam = 2.0*radius*0.4/60.0 #arcmin radius in KMT scaling
         if band == 'I':
             if verbosity > 0:
-                print "Performing AAVSO i -> I band conversion (Jodri 2006)"
+                print("Performing AAVSO i -> I band conversion (Jodri 2006)")
             IDi, RAi, DECi, catMi, catMierr = ctlg.catAAVSO(RAo[0],DECo[0],fovam,'i',out=catname)
             IDr, RAr, DECr, catMr, catMrerr = ctlg.catAAVSO(RAo[0],DECo[0],fovam,'r',out=catname)
             ID, RA, DEC, catM, catMerr = [], [], [], [], []
@@ -237,10 +236,10 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
         raise PSFError('No reference stars in image.')
     if verbosity > 0:
         #output selected catalog stars
-        print "Selected catalog star IDs:"
+        print("Selected catalog star IDs:")
         for i in range(len(ID)):
-            print ID[int(i)], catX[int(i)], catY[int(i)]
-            print catRA[int(i)], catDEC[int(i)], catM[int(i)], catMerr[int(i)]
+            print(ID[int(i)], catX[int(i)], catY[int(i)])
+            print(catRA[int(i)], catDEC[int(i)], catM[int(i)], catMerr[int(i)])
     #number of selected catalog stars
     Ncat = len(ID)
 
@@ -271,12 +270,12 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
     catX2dofs = []
     catIDs = []
     if verbosity > 0:
-        print "Extracting PSF of "+str(Ncat)+" catalog stars."
+        print("Extracting PSF of "+str(Ncat)+" catalog stars.")
     
     #calculate PSF for each reference star
     for i in range(Ncat):
         if verbosity > 0:
-            print "\nComputing PSF of "+str(i+1)+"/"+str(Ncat)
+            print("\nComputing PSF of "+str(i+1)+"/"+str(Ncat))
         #position of reference star
         x0, y0 = catX[i], catY[i]
         #calculate intensity and SN ratio
@@ -299,7 +298,7 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
                 if PSF[3]>90:
                     PSF[3] -= 90
                 if verbosity > 2:
-                    print "Swapping theta to enforce ax<ay"
+                    print("Swapping theta to enforce ax<ay")
             #save magnitude of catalog star
             catMags.append(catM[i])
             catMagerrs.append(catMerr[i])
@@ -318,12 +317,12 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
         else:
             if verbosity > 0:
                 #say something about fit being bad for this particular star
-                print "\nReference star ID"+str(ID[i])+" fit unacceptable"
-                print "Criminal located at position "+str([x0,y0])+".\n"
+                print("\nReference star ID"+str(ID[i])+" fit unacceptable")
+                print("Criminal located at position "+str([x0,y0])+".\n")
 
     ncat = len(catMags) #number of good stars
     if verbosity > 0:
-        print "\nNumber of reference stars used: "+str(ncat)+"/"+str(Ncat)
+        print("\nNumber of reference stars used: "+str(ncat)+"/"+str(Ncat))
     if float(ncat)/Ncat < 0.5:
         #over half reference stars are invalid... how??
         raise PSFError('Unable to perform photometry on reference stars.')
@@ -347,16 +346,16 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
     skyval = catSkyMs.mean() #mean constant background
     noise = catSkyNs.mean() #mean std from background
     if verbosity > 0:
-        print "Average PSF [ax, ay, b, theta] =",str(catPSF)
-        print "parameter errors =",str(catPSFerr)
-        print "Average FWHMx,FWHMy =",str(plib.E2moff_toFWHM(*catPSF[:-1]))
-        print "Average background sky count =",str(skyval)
-        print "Average noise in background =",str(noise)
-        print ""
+        print("Average PSF [ax, ay, b, theta] =",str(catPSF))
+        print("parameter errors =",str(catPSFerr))
+        print("Average FWHMx,FWHMy =",str(plib.E2moff_toFWHM(*catPSF[:-1])))
+        print("Average background sky count =",str(skyval))
+        print("Average noise in background =",str(noise))
+        print("")
 
     if diagnosis:
         if verbosity > 0:
-            print "Returning image data for diagnosis"
+            print("Returning image data for diagnosis")
         return catPSF, catPSFerr, skyval, noise
 
     #Integration using common PSF
@@ -365,7 +364,7 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
     skyNs = np.zeros(ncat)
     for i in range(ncat):
         if verbosity > 0:
-            print "Computing intensity of "+str(i+1)+"/"+str(ncat)
+            print("Computing intensity of "+str(i+1)+"/"+str(ncat))
         #position of star in catalog
         x0, y0 = catXs[i], catYs[i]
         #calculate intensity and SN ratio with reduced verbosity
@@ -390,12 +389,12 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
         skyNs[i]=skyN
 
     if verbosity > 0:
-        print "Mean SN of reference stars:",np.mean(catSNs)
-        print "Mean background noise:", np.mean(skyNs), np.std(skyNs)
-        print ""
+        print("Mean SN of reference stars:",np.mean(catSNs))
+        print("Mean background noise:", np.mean(skyNs), np.std(skyNs))
+        print("")
     if verbosity > 1:
         #essential extra import
-        import MagPlot as magplt
+        from . import MagPlot as magplt
         
         #diagnostic for SNR, N, I calculation routine
         #instrumental magnitudes
@@ -409,19 +408,21 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
         #photometric solution between instrumental magnitudes vs catalog
         magplt.phot_sol(insMags, insMagerrs, catMags, catMagerrs)
         if band == 'B':
-            magplt.Bcol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catMags, catMagerrs)
+            # magplt.Bcol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catMags, catMagerrs)
+            pass
         elif band == 'I':
-            magplt.Icol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catMags, catMagerrs)
+            # magplt.Icol_corr(cat, catname, catIDs, RAo, DECo, radius, insMags, insMagerrs, catMags, catMagerrs)
+            pass
         #check reference star fit qualities
         magplt.X2_hist(catX2dofs)
-        print ""
+        print("")
         
     #calculate photometry for source object
     #extract PSF to as great a degree as needed from source
     if Nobj == 1 or aperture is not None:
         PSFpopt, PSFperr, X2dof, skypopto, skyNo = [0]*7, [0]*7, 0, [0]*3, 0
         if verbosity > 0:
-            print "Computing photometry of source "+name[0]
+            print("Computing photometry of source "+name[0])
 
         if aperture is not None:
             #PSFpopt, PSFperr, X2dof, skypopto, skyNo = pht.PSFextract(image, Xo[0], Yo[0], fwhm, fitsky=fitsky[0], sat=satpix, verbosity=verbosity)
@@ -450,6 +451,7 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
             if aperture <= 0:
                 #use FWHM of catPSF to define Kron aperture
                 Io, SNo = pht.Ap_photometry(image, Xo[0], Yo[0], skypopto, skyNo, PSF=catPSF, fitsky=fitsky[0], verbosity=verbosity)
+                print(Io)
             else:
                 #use aperture given directly
                 Io, SNo = pht.Ap_photometry(image, Xo[0], Yo[0], skypopto, skyNo, radius=aperture, fitsky=fitsky[0], verbosity=verbosity)
@@ -464,17 +466,17 @@ def magnitude(image, catimage, wcs, cat, catname, (RAo,DECo), radius=500, over_i
             Io, SNo = np.zeros(Nobj), np.zeros(Nobj)
             for i in range(Nobj):
                 if verbosity > 0:
-                    print "Computing photometry of source "+name[i]
+                    print("Computing photometry of source "+name[i])
                 Io[i], SNo[i] = pht.PSF_photometry(image, Xo[i], Yo[i], PSFpopt[i], PSFperr[i], psf[i], skypopto, skyNo, verbosity=verbosity)
         else:
             #perform aperture photometry
-            print "Multi-object aperture photometry under construction!"
-            print "Try again later, when it is finished."
+            print("Multi-object aperture photometry under construction!")
+            print("Try again later, when it is finished.")
             Io, SNo = [0]*Nobj, [0]*Nobj
     else:
         #Invalid fit selected, don't fit source
         if verbosity > 0:
-            print "No source selected."
+            print("No source selected.")
             Io, SNo, skyNo = [0]*Nobj, [0]*Nobj, 0
     #Override intensity value using other calculation
     if over_intens is not None:
@@ -572,7 +574,7 @@ def limitingM(ru, rl, limsnr, PSF, PSFerr, skyN, catM, catMerr, catSN, catI, ver
     ##########################################################################
     """
     
-    import PSFlib as plib
+    from . import PSFlib as plib
     
     if len(PSF) == 4:
         #extract values from PSF
@@ -595,12 +597,12 @@ def limitingM(ru, rl, limsnr, PSF, PSFerr, skyN, catM, catMerr, catSN, catI, ver
         frac = 0.9
         #do photometry over synthetic sources for each A
         if verbosity > 0:
-            print "Computing "+str(n)+" synthetic sources to find mlim"
-            print "PSF parameters: " + str(PSF)
-            print "A bound: " + str(Aest)
+            print("Computing "+str(n)+" synthetic sources to find mlim")
+            print("PSF parameters: " + str(PSF))
+            print("A bound: " + str(Aest))
         for j in range(len(A_trials)):
             if verbosity > 2:
-                print "Computing "+str(j+1)+"/"+str(n)
+                print("Computing "+str(j+1)+"/"+str(n))
             #integrate synthetic PSF
             I = plib.E2moff_integrate(A_trials[j],ax,ay,b,frac)
             #get aperture size around synthetic star
@@ -623,33 +625,33 @@ def limitingM(ru, rl, limsnr, PSF, PSFerr, skyN, catM, catMerr, catSN, catI, ver
         mlim = np.sum(mlim*w)/np.sum(w)
         #output comments
         if verbosity > 0:
-            print "maximum SN="+str(SNUbound)
-            print "minimum SN="+str(SNLbound)
-            print "mlim calculated at SN="+str(SNlim)
+            print("maximum SN="+str(SNUbound))
+            print("minimum SN="+str(SNLbound))
+            print("mlim calculated at SN="+str(SNlim))
         #check convergence
         if abs(SNlim - limsnr) > 0.1:
             #prevent stack overflow after 20 recursions
             if level+1 > 20:
                 if verbosity > 0:
-                    print "Convergence terminated to prevent stack overflow."
+                    print("Convergence terminated to prevent stack overflow.")
                 return float('NaN'), float('NaN'), float('NaN'), float('NaN')
             #not yet convergent, narrow down SN range
             if SNUbound > limsnr and SNLbound < limsnr:
                 #take closest points and converge more
                 if verbosity > 0:
-                    print "mlim Monte Carlo inconvergent, refine.\n"
+                    print("mlim Monte Carlo inconvergent, refine.\n")
                 ru = A_trials[SN_trials>limsnr][0]/Aest
                 rl = A_trials[SN_trials<limsnr][-1]/Aest
                 return limitingM(ru, rl, limsnr, PSF, PSFerr, skyN, catM, catMerr, catSN, catI, verbosity, level+1)
             elif SNUbound < limsnr:
                 #need to rise more to converge
                 if verbosity > 0:
-                    print "mlim Monte Carlo inconvergent, upstep.\n"
+                    print("mlim Monte Carlo inconvergent, upstep.\n")
                 return limitingM(ru*10.0, rl, limsnr, PSF, PSFerr, skyN, catM, catMerr, catSN, catI, verbosity, level+1)
             elif SNLbound > limsnr:
                 #need to drop more to converge
                 if verbosity > 0:
-                    print "mlim Monte Carlo inconvergent, downstep.\n"
+                    print("mlim Monte Carlo inconvergent, downstep.\n")
                 return limitingM(ru, rl/10.0, limsnr, PSF, PSFerr, skyN, catM, catMerr, catSN, catI, verbosity, level+1)
         else:
             #convergent
@@ -698,8 +700,8 @@ if __name__ == "__main__":
     if args.noiseSNR != 0:
         RA, DEC, I, SN, M, Merr, Mlim = magnitude(image, catimage, wcs, args.catalog, args.catname, (RA,DEC), radius=args.radius, aperture=args.aperture, psf=args.psf, name=args.source, band=args.band, fwhm=args.fwhm, limsnr=args.noiseSNR, satmag=args.satMag, refmag=args.refMag, fitsky=args.fit_sky, satpix=args.satpix, verbosity=args.verbosity)
         #output position, magnitude
-        print time, RA, DEC, I, SN, M, Merr, Mlim
+        print(time, RA, DEC, I, SN, M, Merr, Mlim)
     else:
         RA, DEC, I, SN, M, Merr = magnitude(image, catimage, wcs, args.catalog, args.catname, (RA,DEC), radius=args.radius, aperture=args.aperture, psf=args.psf, name=args.source, band=args.band, fwhm=args.fwhm, limsnr=args.noiseSNR, satmag=args.satMag, refmag=args.refMag, fitsky=args.fit_sky, satpix=args.satpix, verbosity=args.verbosity)
         #output position, magnitude
-        print time, RA, DEC, I, SN, M, Merr
+        print(time, RA, DEC, I, SN, M, Merr)

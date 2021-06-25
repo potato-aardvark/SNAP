@@ -69,7 +69,7 @@ def MCDM(z, zerr, n=1000):
         DMs.append(DM)
     DM = intDM(z)
     DMerr = np.std(DMs)
-    print DM, DMerr
+    print((DM, DMerr))
 
 #function: projected dist (pc) between angle separated objects at redshift z
 def sepDistProj(sepRad, z):
@@ -85,7 +85,7 @@ def deredFlux(appFlux, EBV, Coef):
 #function: calculate absolute magnitude at redshift z
 def absMag(appMag, z, appMag_err=None, z_err=None, Kcorr=None):
     dl = intDl(z)
-    print dl
+    print(dl)
     if Kcorr is None:
         #estimate absolute magnitude using luminosity distance and naive K
         Mabs = appMag - 5.*np.log10(dl/10.0) - 2.5*np.log10(1+z)

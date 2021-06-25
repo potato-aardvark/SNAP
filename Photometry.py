@@ -111,8 +111,8 @@ def SkyFit(image, x0, y0, fitsky, fwhm=5.0, sat=40000.0, verbosity=0):
     #update 180610: x0, y0 need to be lists (even if length is 1)
     
     from scipy.optimize import curve_fit
-    from PSFlib import D2plane
-    from MagCalc import PSFError
+    from .PSFlib import D2plane
+    from .MagCalc import PSFError
     
     if hasattr(x0, '__iter__'):
         Nobj = len(x0)
@@ -193,9 +193,9 @@ def SkyFit(image, x0, y0, fitsky, fwhm=5.0, sat=40000.0, verbosity=0):
             for i in np.arange(x1, x2):
                 for j in np.arange(y1, y2):
                     I_t[j][i] = D2plane((i, j),*skypopt)
-            print "Plotting sky planar fit residual"
-            print "Plotting image at x:", x1, x2
-            print "Plotting image at y:", y1, y2
+            print("Plotting sky planar fit residual")
+            print("Plotting image at x:", x1, x2)
+            print("Plotting image at y:", y1, y2)
             sb = image[y1:y2,x1:x2]-I_t[y1:y2,x1:x2]
             sbmax = 5*skyN
             sbmin = -5*skyN
@@ -209,10 +209,10 @@ def SkyFit(image, x0, y0, fitsky, fwhm=5.0, sat=40000.0, verbosity=0):
         #catastrophic failure of sky plane fitting, How???
         raise PSFError('Sky fitting catastrophic failure.')
     if verbosity > 0:
-        print "sky plane fit parameters"
-        print "[a, b, c] = "+str(skypopt)
-        print "errors = "+str(skyperr)
-        print "Noise = "+str(skyN)
+        print("sky plane fit parameters")
+        print("[a, b, c] = "+str(skypopt))
+        print("errors = "+str(skyperr))
+        print("Noise = "+str(skyN))
     #return sky plane, sky noise, and goodness of fit
     return skypopt, skyperr, skyX2dof, skyN
 
@@ -220,7 +220,7 @@ def SkyFit(image, x0, y0, fitsky, fwhm=5.0, sat=40000.0, verbosity=0):
 def PSFextract(image, x0, y0, fwhm=5.0, fitsky=True, sat=40000.0, verbosity=0):
     
     from scipy.optimize import curve_fit
-    from PSFlib import D2plane, E2moff, E2moff_toFWHM, E2moff_verify
+    from .PSFlib import D2plane, E2moff, E2moff_toFWHM, E2moff_verify
     
     #fit sky background in an annulus
     skypopt, skyperr, skyX2dof, skyN = SkyFit(image, [x0], [y0], [fitsky], fwhm, sat, verbosity)
@@ -283,7 +283,7 @@ def PSFextract(image, x0, y0, fwhm=5.0, fitsky=True, sat=40000.0, verbosity=0):
         X2dof = np.sum(np.square((intens-I_theo)/np.sqrt(np.absolute(intens)+skyN**2)))/(len(intens)-len(PSFpopt))
     except:
         #catastrophic failure of PSF fitting
-        print "PSF fitting catastrophic failure"
+        print("PSF fitting catastrophic failure")
         PSFpopt = [0]*7
         PSFperr = [0]*7
         X2dof = 0
@@ -300,11 +300,11 @@ def PSFextract(image, x0, y0, fwhm=5.0, fitsky=True, sat=40000.0, verbosity=0):
     FWHMx, FWHMy = E2moff_toFWHM(ax, ay, b)
     
     if verbosity > 0:
-        print "PSF moffat fit parameters"
-        print "[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt)
-        print "parameter errors = "+str(PSFperr)
-        print "Chi2 = "+str(X2dof)
-        print "[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy])
+        print("PSF moffat fit parameters")
+        print("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt))
+        print("parameter errors = "+str(PSFperr))
+        print("Chi2 = "+str(X2dof))
+        print("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy]))
         
     #graph fits if verbosity is high enough
     if verbosity > 1:
@@ -319,7 +319,7 @@ def PSFextract(image, x0, y0, fwhm=5.0, fitsky=True, sat=40000.0, verbosity=0):
 def PSFfit(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
 
     from scipy.optimize import curve_fit
-    from PSFlib import D2plane, E2moff, E2moff_toFWHM, E2moff_verify
+    from .PSFlib import D2plane, E2moff, E2moff_toFWHM, E2moff_verify
 
     #get given fit parameters
     ax, axerr = PSF[0], PSFerr[0]
@@ -354,7 +354,7 @@ def PSFfit(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
         #fit 2d fixed psf to background subtracted source light
         est = [image[int(y0)][int(x0)],x0,y0]
         bounds = ([-float("Inf"),0,0],[float("Inf"),image.shape[1],image.shape[0]])
-        fitpopt, fitpcov = curve_fit(lambda (x, y),A,x0,y0: E2moff((x, y),A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=est, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
+        fitpopt, fitpcov = curve_fit(lambda xy,A,x0,y0: E2moff(xy,A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=est, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
         #parameters fitted to source
         A = fitpopt[0]
         X0 = fitpopt[1]
@@ -366,14 +366,14 @@ def PSFfit(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
         x, y, intens = PSFclean(x,y,intens,I_theo,skyN,sat,10,10)
 
         #calculate better PSF from cleaner data
-        fitpopt, fitpcov = curve_fit(lambda (x, y),A,x0,y0: E2moff((x, y),A,ax,ay,b,theta,X0,Y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
+        fitpopt, fitpcov = curve_fit(lambda xy,A,x0,y0: E2moff(xy,A,ax,ay,b,theta,X0,Y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
         try:
             #try to calculate fit error
             fitperr = np.sqrt(np.diag(fitpcov))
         except:
             try:
                 #take closer initial conditions
-                fitpopt, fitpcov = curve_fit(lambda (x, y),A,x0,y0: E2moff((x, y),A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
+                fitpopt, fitpcov = curve_fit(lambda xy,A,x0,y0: E2moff(xy,A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
                 fitperr = np.sqrt(np.diag(fitpcov))
             except:
                 fitperr = [0]*3
@@ -388,16 +388,16 @@ def PSFfit(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
         X2dof = np.sum(np.square((intens-I_theo)/np.sqrt(np.absolute(intens)+skyN**2)))/(len(intens)-len(fitpopt))
     except:
         #catastrophic failure of PSF fitting
-        print "PSF fitting catastrophic failure"
+        print("PSF fitting catastrophic failure")
         PSFpopt = [0]*7
         PSFperr = [0]*7
         X2dof = 0
     if verbosity > 0:
-        print "PSF moffat fit parameters"
-        print "[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt)
-        print "parameter errors = "+str(PSFperr)
-        print "Chi2 = "+str(X2dof)
-        print "[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy])
+        print("PSF moffat fit parameters")
+        print("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt))
+        print("parameter errors = "+str(PSFperr))
+        print("Chi2 = "+str(X2dof))
+        print("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy]))
 
     #graph fits if verbosity is high enough
     if verbosity > 1:
@@ -413,7 +413,7 @@ def PSFfit(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
 def PSFscale(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
     
     from scipy.optimize import curve_fit
-    from PSFlib import D2plane, E2moff, E2moff_toFWHM, E2moff_verify
+    from .PSFlib import D2plane, E2moff, E2moff_toFWHM, E2moff_verify
 
     #get given fit parameters
     ax, axerr = PSF[0], PSFerr[0]
@@ -441,7 +441,7 @@ def PSFscale(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
     try:
         #fit 2d fixed psf to background subtracted source light
         est = [image[int(y0)][int(x0)]]
-        fitpopt, fitpcov = curve_fit(lambda (x, y),A: E2moff((x, y),A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=est, absolute_sigma=True, maxfev=maxfev)
+        fitpopt, fitpcov = curve_fit(lambda xy,A: E2moff(xy,A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=est, absolute_sigma=True, maxfev=maxfev)
         #parameters fitted to source
         PSFpopt = [fitpopt[0],ax,ay,b,theta,x0,y0]
         #Fit function
@@ -450,14 +450,14 @@ def PSFscale(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
         x, y, intens = PSFclean(x,y,intens,I_theo,skyN,sat,10,10)
 
         #calculate better PSF from cleaner data
-        fitpopt, fitpcov = curve_fit(lambda (x, y),A: E2moff((x, y),A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, absolute_sigma=True, maxfev=maxfev)
+        fitpopt, fitpcov = curve_fit(lambda xy,A: E2moff(xy,A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, absolute_sigma=True, maxfev=maxfev)
         try:
             #try to calculate fit error
             fitperr = np.sqrt(np.diag(fitpcov))
         except:
             try:
                 #take closer initial conditions
-                fitpopt, fitpcov = curve_fit(lambda (x, y),A: E2moff((x, y),A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, absolute_sigma=True, maxfev=maxfev)
+                fitpopt, fitpcov = curve_fit(lambda xy,A: E2moff(xy,A,ax,ay,b,theta,x0,y0), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, absolute_sigma=True, maxfev=maxfev)
                 fitperr = np.sqrt(np.diag(fitpcov))
             except:
                 fitperr = [0]
@@ -470,16 +470,16 @@ def PSFscale(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
         X2dof = np.sum(np.square((intens-I_theo)/np.sqrt(np.absolute(intens)+skyN**2)))/(len(intens)-len(fitpopt))
     except:
         #catastrophic failure of PSF fitting
-        print "PSF fitting catastrophic failure"
+        print("PSF fitting catastrophic failure")
         PSFpopt = [0]*7
         PSFperr = [0]*7
         X2dof = 0
     if verbosity > 0:
-        print "PSF moffat fit parameters"
-        print "[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt)
-        print "parameter errors = "+str(PSFperr)
-        print "Chi2 = "+str(X2dof)
-        print "[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy])
+        print("PSF moffat fit parameters")
+        print("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt))
+        print("parameter errors = "+str(PSFperr))
+        print("Chi2 = "+str(X2dof))
+        print("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy]))
 
     #graph fits if verbosity is high enough
     if verbosity > 1:
@@ -494,7 +494,7 @@ def PSFscale(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
 def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity=0):
 
     from scipy.optimize import curve_fit
-    from PSFlib import D2plane, E2moff_multi, E2moff_toFWHM, E2moff_verify
+    from .PSFlib import D2plane, E2moff_multi, E2moff_toFWHM, E2moff_verify
 
     maxfev = 1000000
 
@@ -566,21 +566,21 @@ def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity
     
     try:
         #fit 2d fixed psf to background subtracted source light
-        fitpopt, fitpcov = curve_fit(lambda (x, y),*free: E2moff_multi((x, y),psftype, given, free), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=est, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
+        fitpopt, fitpcov = curve_fit(lambda xy,*free: E2moff_multi(xy,psftype, given, free), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=est, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
         #Fit function
         I_theo = E2moff_multi((x, y),psftype, given, fitpopt)
         #filter out noisy pixels at 5sigma level (cos rays/hot pix)
         x, y, intens = PSFclean(x,y,intens,I_theo,skyN,sat,10,10)
 
         #calculate better PSF from cleaner data
-        fitpopt, fitpcov = curve_fit(lambda (x, y),*free: E2moff_multi((x, y),psftype, given, free), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
+        fitpopt, fitpcov = curve_fit(lambda xy,*free: E2moff_multi(xy,psftype, given, free), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
         try:
             #try to calculate fit error
             fitperr = np.sqrt(np.diag(fitpcov))
         except:
             try:
                 #take closer initial conditions
-                fitpopt, fitpcov = curve_fit(lambda (x, y),*free: E2moff_multi((x, y),psftype, given, free), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
+                fitpopt, fitpcov = curve_fit(lambda xy,*free: E2moff_multi(xy,psftype, given, free), (x,y), intens, sigma=np.sqrt(np.absolute(intens)+skyN**2), p0=fitpopt, bounds=bounds, absolute_sigma=True, maxfev=maxfev)
                 fitperr = np.sqrt(np.diag(fitpcov))
             except:
                 fitperr = [0]*len(est)
@@ -627,8 +627,8 @@ def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity
             for i in np.arange(x1, x2):
                 for j in np.arange(y1, y2):
                     I_t[j][i] = E2moff_multi((i, j),psftype, given, fitpopt) + D2plane((i, j),*skypopt)
-            print "Plotting image at x:", x1, x2
-            print "Plotting image at y:", y1, y2
+            print("Plotting image at x:", x1, x2)
+            print("Plotting image at y:", y1, y2)
             sb = image[y1:y2,x1:x2]-I_t[y1:y2,x1:x2]
             sbmax = 5*skyN
             sbmin = -5*skyN
@@ -639,25 +639,25 @@ def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity
             plt.show()
     except:
         #catastrophic failure of PSF fitting
-        print "PSF fitting catastrophic failure"
+        print("PSF fitting catastrophic failure")
         PSFpopt = [[0]*7]*Nobj
         PSFperr = [[0]*7]*Nobj
         X2dof = 0
     if verbosity > 0:
-        print "Multi-obj best fit parameters"
+        print("Multi-obj best fit parameters")
         for i in range(Nobj):
             if psftype[i][0] != 's':
-                print "Object "+str(i+1)+":"
-                print "[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt[i])
-                print "parameter errors = "+str(PSFperr[i])
-                print "Chi2 = "+str(X2dof)
+                print("Object "+str(i+1)+":")
+                print("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt[i]))
+                print("parameter errors = "+str(PSFperr[i]))
+                print("Chi2 = "+str(X2dof))
                 FWHMx, FWHMy = E2moff_toFWHM(PSFpopt[i][1], PSFpopt[i][2], PSFpopt[i][3])
-                print "[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy])
+                print("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy]))
             else:
-                print "Object "+str(i+1)+":"
-                print "[Ie,re,n,X0,Y0,e,theta] = "+str(PSFpopt[i])
-                print "parameter errors = "+str(PSFperr[i])
-                print "Chi2 = "+str(X2dof)
+                print("Object "+str(i+1)+":")
+                print("[Ie,re,n,X0,Y0,e,theta] = "+str(PSFpopt[i]))
+                print("parameter errors = "+str(PSFperr[i]))
+                print("Chi2 = "+str(X2dof))
 
     #graph fits if verbosity is high enough
     if verbosity > 1:
@@ -671,8 +671,8 @@ def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity
             if not E2moff_verify(PSFpopt[i], x0[i], y0[i]):
                 ridic = True
                 if verbosity > 0:
-                    print "Bad PSF: Object "+str(i+1)
-                    print dist(PSFpopt[i][5],PSFpopt[i][6],x0[i],y0[i])
+                    print("Bad PSF: Object "+str(i+1))
+                    print(dist(PSFpopt[i][5],PSFpopt[i][6],x0[i],y0[i]))
     if not ridic:
         #None of the fits were ridiculous
         return PSFpopt, PSFperr, X2dof, skypopt, skyN
@@ -683,7 +683,7 @@ def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity
 def PSF_plot(image, x0, y0, PSFpopt, X2dof, skypopt, skyN, fitsky, window=15):
 
     import matplotlib.pyplot as plt
-    from PSFlib import D2plane, E2moff, E2moff_toFWHM
+    from .PSFlib import D2plane, E2moff, E2moff_toFWHM
     
     #get fit parameters
     A = PSFpopt[0]
@@ -754,7 +754,7 @@ def PSF_plot(image, x0, y0, PSFpopt, X2dof, skypopt, skyN, fitsky, window=15):
 def PSFmulti_plot(image, x0, y0, PSFpopt, psftype, X2dof, skypopt, skyN, fitsky, window=15):
 
     import matplotlib.pyplot as plt
-    from PSFlib import D2plane, E2moff_multi, E2moff_toFWHM
+    from .PSFlib import D2plane, E2moff_multi, E2moff_toFWHM
 
     psfpopt = np.concatenate(PSFpopt)
     psfmod = np.copy(psftype)
@@ -825,7 +825,7 @@ def PSFmulti_plot(image, x0, y0, PSFpopt, psftype, X2dof, skypopt, skyN, fitsky,
 #function: calculates photometric intensity and sky background using PSF
 def PSF_photometry(image, x0, y0, PSFpopt, PSFperr, psftype, skypopt, skyN, verbosity=0):
 
-    from PSFlib import D2plane, E2moff, E2moff_verify, E2moff_integrate, E2moff_apsize, Sersic_integrate
+    from .PSFlib import D2plane, E2moff, E2moff_verify, E2moff_integrate, E2moff_apsize, Sersic_integrate
 
     if psftype[0] != 's':
         #Moffat psf integration
@@ -853,7 +853,7 @@ def PSF_photometry(image, x0, y0, PSFpopt, PSFperr, psftype, skypopt, skyN, verb
             SNo = Io/sigmao
         else:
             if verbosity > 0:
-                print "Divergent integral, PSF not viable for PSF photometry"
+                print("Divergent integral, PSF not viable for PSF photometry")
             Io = 0
             SNo = 0
             SNr = 0
@@ -889,9 +889,9 @@ def PSF_photometry(image, x0, y0, PSFpopt, PSFperr, psftype, skypopt, skyN, verb
             
     #output information
     if verbosity > 0:
-        print "\n"
-        print "signal to noise: "+str(SNo)
-        print "\n"
+        print("\n")
+        print("signal to noise: "+str(SNo))
+        print("\n")
     
     #return intensity, and signal to noise
     return Io, SNo
@@ -899,7 +899,7 @@ def PSF_photometry(image, x0, y0, PSFpopt, PSFperr, psftype, skypopt, skyN, verb
 #function: calculates photometric intensity and sky background using aperture
 def Ap_photometry(image, x0, y0, skypopt, skyN, radius=None, PSF=None, fitsky=True, verbosity=0):
     
-    from PSFlib import D2plane, E2moff_verify
+    from .PSFlib import D2plane, E2moff_verify
     
     if radius is None and E2moff_verify(PSF, x0, y0):
         #get some critical values to calculate radius
@@ -926,15 +926,15 @@ def Ap_photometry(image, x0, y0, skypopt, skyN, radius=None, PSF=None, fitsky=Tr
         sigmar = np.sqrt(np.absolute(Io) + (skyN**2)*PSF_extract.size)
         SNo = Io/sigmar
     else:
-        print "Unable to integrate, invalid aperture."
+        print("Unable to integrate, invalid aperture.")
         Io = 0
         SNo = 0
     
     if verbosity > 0:
-        print "\n"
-        print "Signal to noise: "+str(SNo)
-        print "Pixel aperture radius: "+str(radius)
-        print "\n"
+        print("\n")
+        print("Signal to noise: "+str(SNo))
+        print("Pixel aperture radius: "+str(radius))
+        print("\n")
 
     #graph photometry if verbosity is high enough
     if verbosity > 1 and radius > 0:
@@ -1000,7 +1000,7 @@ def Ap_photometry(image, x0, y0, skypopt, skyN, radius=None, PSF=None, fitsky=Tr
         f.subplots_adjust(hspace=0)
         plt.show()
     elif verbosity > 1:
-        print "Unable to plot, aperture=0."
+        print("Unable to plot, aperture=0.")
 
     #return intensity, and signal to noise
     return Io, SNo

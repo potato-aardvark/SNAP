@@ -12,7 +12,7 @@ import numpy as np
 #Query AAVSO APASS DR9 catalog
 def aavso(radeg,decdeg,fovam,band,out=False):
 
-    import urllib as url
+    import urllib.request as url
     
     str1 = 'http://webviz.u-strasbg.fr/viz-bin/asu-tsv/?-source=II/336' 
     str2 = '&-c.ra={:4.6f}&-c.dec={:4.6f}&-c.bm={:4.7f}/{:4.7f}&-out.max=unlimited'.format(radeg,decdeg,fovam,fovam)
@@ -71,7 +71,7 @@ def aavso_static(lines, band):
 #query Vizier USNO-B1 catalog
 def usnoB(radeg,decdeg,fovam,band,out=False): # RA/Dec in decimal degrees/J2000.0 FOV in arc min. 
 
-    import urllib as url
+    import urllib.request as url
     
     str1 = 'http://webviz.u-strasbg.fr/viz-bin/asu-tsv/?-source=USNO-B1' 
     str2 = '&-c.ra={:4.6f}&-c.dec={:4.6f}&-c.bm={:4.7f}/{:4.7f}&-out.max=unlimited'.format(radeg,decdeg,fovam,fovam)
@@ -114,7 +114,7 @@ def usnoB(radeg,decdeg,fovam,band,out=False): # RA/Dec in decimal degrees/J2000.
             # deal with case where no mag is reported
             #if (kw[bands[band]] != null) and (kw[banderrs[band]]) != null:
             if (kw[bands[band]] != null) and (kw[bands[band]] != empt):
-                print "Mag", kw[bands[band]], "len", len(kw[bands[band]])
+                print("Mag", kw[bands[band]], "len", len(kw[bands[band]]))
                 rmag = np.append(rmag,float(kw[bands[band]]))
                 #rmagerr = np.append(rmag,float(kw[banderrs[band]]))
             else:

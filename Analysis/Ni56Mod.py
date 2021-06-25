@@ -64,12 +64,12 @@ def ArnettFit(t, M_N, MejE):
     s=tau_m*(tau_Co-tau_Ni)/(2.*tau_Co*tau_Ni)
 
     for i in range(n):
-	z=np.arange(100)*x[i]/100.
-	Az=2.*z*np.exp(-2.*z*y+np.square(z))
-	Bz=2.*z*np.exp(-2.*z*y+2.*z*s+np.square(z))
-	int_A[i]=simps(Az,z)
-	int_B[i]=simps(Bz,z)
-	L_ph[i]=(M_Ni*np.exp(-1.*np.square(x[i])))*((e_Ni-e_Co)*int_A[i]+e_Co*int_B[i])
+        z=np.arange(100)*x[i]/100.
+        Az=2.*z*np.exp(-2.*z*y+np.square(z))
+        Bz=2.*z*np.exp(-2.*z*y+2.*z*s+np.square(z))
+        int_A[i]=simps(Az,z)
+        int_B[i]=simps(Bz,z)
+        L_ph[i]=(M_Ni*np.exp(-1.*np.square(x[i])))*((e_Ni-e_Co)*int_A[i]+e_Co*int_B[i])
 
     #return results
     return L_ph
@@ -118,7 +118,7 @@ def ArnettIntercept(tmax, Lmax, tmax_err, Lmax_err, p0=1.2, n=100, nproc=4):
     from multiprocessing import Pool
 
     #to pickle properly, you need dill.
-    from multi import apply_async
+    from .multi import apply_async
 
     pool = Pool(nproc)
     
@@ -127,7 +127,7 @@ def ArnettIntercept(tmax, Lmax, tmax_err, Lmax_err, p0=1.2, n=100, nproc=4):
     #For each point, solve function
     procs = []
     for i, x in enumerate(xs):
-        print str(i+1)+'/'+str(n)
+        print((str(i+1)+'/'+str(n)))
         errfunc = lambda p: ArnettMaxErr1(p, x, tmax_err)
         procs.append(apply_async(pool, fmin, [errfunc, p0, (), 0.001, 0.01]))
     #retrieve processes
@@ -280,7 +280,7 @@ def PN13Fit(t, t_diff, L_diff, Mej, Ek, beta, x_2, plot=False):
         ax[1].axes.get_xaxis().set_ticklabels([])
 
         X56_diff = norm/(1.+np.exp(-beta*(1.-x_2)))
-        print "Ni56 mass:", M_ni
+        print(("Ni56 mass:", M_ni))
         ax[2].plot(x, X56_x/X56_diff, 'k')
         ax[2].set_yscale('log')
         ax[2].set_ylim([0.001,2.0])
@@ -481,7 +481,7 @@ def Ni56dist(t, t_diff, L_diff, Mej, Ek, beta, x_2):
 #function: predict observations in some band
 def predNi56mod(t, wave, z, DM, taus, t_diff, L_diff, Mej, Ek, beta, x_2):
     from scipy.integrate import simps
-    from SEDAnalysis import BBflux
+    from .SEDAnalysis import BBflux
 
     #t = np.arange(t_diff/1000,twin,0.01)
     tr = t/(1.+z)
@@ -742,7 +742,7 @@ def ShallowNiFit(t, t_diff, L_diff, Mej, Ek, beta, x_2, x_s, a_s, plot=False):
         ax[1].axes.get_xaxis().set_ticklabels([])
 
         X56_diff = norm/(1.+np.exp(-beta*(1.-x_2)))
-        print "Ni56 mass:", M_ni
+        print(("Ni56 mass:", M_ni))
         ax[2].plot(x, X56_x/X56_diff, 'k')
         ax[2].set_yscale('log')
         ax[2].set_ylim([0.001,2.0])
@@ -760,7 +760,7 @@ def ShallowNiFit(t, t_diff, L_diff, Mej, Ek, beta, x_2, x_s, a_s, plot=False):
 #function: predict observations in some band
 def predShallowNimod(t, wave, z, DM, taus, t_diff, L_diff, Mej, Ek, beta, x_2, x_s, a_s, prnt=False):
     from scipy.integrate import simps
-    from SEDAnalysis import BBflux
+    from .SEDAnalysis import BBflux
     
     #t = np.arange(t_diff/1000,twin,0.01)
     tr = t/(1.+z)
@@ -776,14 +776,14 @@ def predShallowNimod(t, wave, z, DM, taus, t_diff, L_diff, Mej, Ek, beta, x_2, x
     #diffusion wave depth at peak in solar masses
     dM_diff = t_diff**1.76*(2.0e-2*Ek**0.44)/(k_opt**0.88*Mej**0.32)
     if prnt:
-        print "Time when clump exposed", tr[tr<x_s*t_diff][-1]
-        print "Mass in clump", dM[tr<x_s*t_diff][-1]
+        print(("Time when clump exposed", tr[tr<x_s*t_diff][-1]))
+        print(("Mass in clump", dM[tr<x_s*t_diff][-1]))
     
     #photospheric radius for calculating temperature [cm]
     rph = 3.0e14 * (tr**0.78)*(k_opt**0.11)*(Ek**0.39)/(Mej*1.40)**0.28
     if prnt:
-        print "tau when clump exposed", taus[tr<x_s*t_diff][-1]
-        print "Rphot when clump exposed", rph[tr<x_s*t_diff][-1]
+        print(("tau when clump exposed", taus[tr<x_s*t_diff][-1]))
+        print(("Rphot when clump exposed", rph[tr<x_s*t_diff][-1]))
     
     tau_Ni=8.8 #decay time of Ni56 in day
     tau_Co=9.822e6/86400. #decay time of Co56 in day
@@ -827,7 +827,7 @@ def predShallowNimod(t, wave, z, DM, taus, t_diff, L_diff, Mej, Ek, beta, x_2, x
     #approx. local heating from Ni56 in erg/s
     M56 = X56_x*dM
     if prnt:
-        print "Ni56 in clump", M56[x<x_s][-1]
+        print(("Ni56 in clump", M56[x<x_s][-1]))
     L56 = M56*M_sun*eps
     #color temperature (approximate)
     Tc = np.power(L*taus/(4.*np.pi*rph**2*sb_const), 0.25)
@@ -923,10 +923,10 @@ def ShallowNiPlot(ts, Ms, M_errs, bs, z, DM, t_pred, taus, t_diff, L_diff,
                 #get suppression (errors) by Janskies
                 masko = np.logical_and(ts[i]>0.4, ts[i]<0.7)
                 maski = np.logical_and(t_pred>ts[i][masko][0], t_pred<ts[i][masko][-1])
-                print bs[i]
-                print np.mean(L_pred[maski]) - np.mean(Ls[masko])
-                print np.mean(L_pred2[maski]) - np.mean(Ls[masko])
-                print np.mean(L_pred3[maski]) - np.mean(Ls[masko])
+                print((bs[i]))
+                print((np.mean(L_pred[maski]) - np.mean(Ls[masko])))
+                print((np.mean(L_pred2[maski]) - np.mean(Ls[masko])))
+                print((np.mean(L_pred3[maski]) - np.mean(Ls[masko])))
                 
                 #plot janskies in rest frame (or certain radius)
                 ax[i].errorbar(ts[i], Ls, L_errs, fmt='k+')

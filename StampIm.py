@@ -83,25 +83,25 @@ def make_image_collage(files, names, outname, ra, dec, radius=100, scale=0.001, 
     with PdfPages(outname) as pdf:
         #for each image, place onto A4 paper
         for i, filename in enumerate(files):
-            print "Stamping",filename
+            print("Stamping",filename)
             #read image
             image = make_stamp_image(filename, ra, dec, radius)
-            print "Image size"
-            print image.shape
+            print("Image size")
+            print(image.shape)
             #leave some space to place image from marker
-            print "Deciding marker placement"
+            print("Deciding marker placement")
             corner1 = [marker[0]-spacing-image.shape[0], marker[1]+spacing]
             corner2 = [corner1[0]+image.shape[0], corner1[1]+image.shape[1]]
-            print corner1, corner2
+            print(corner1, corner2)
             if corner2[1] > width:
-                print "New row"
+                print("New row")
                 #go to new row
                 marker = [corner1[0], 0]
                 corner1 = [marker[0]-spacing-image.shape[0], marker[1]+spacing]
                 corner2 = [corner1[0]+image.shape[0], corner1[1]+image.shape[1]]
-                print corner1, corner2
+                print(corner1, corner2)
             if corner1[0] < 0:
-                print "New page"
+                print("New page")
                 #save current page
                 papers.append(paper)
                 texts.append([textloc, textname])
@@ -114,8 +114,8 @@ def make_image_collage(files, names, outname, ra, dec, radius=100, scale=0.001, 
                 centloc = []
                 corner1 = [marker[0]-spacing-image.shape[0], marker[1]+spacing]
                 corner2 = [corner1[0]+image.shape[0], corner1[1]+image.shape[1]]
-                print corner1, corner2
-            print "Image stamped"
+                print(corner1, corner2)
+            print("Image stamped")
             paper[corner1[0]:corner2[0], corner1[1]:corner2[1]] = image
             textloc.append([corner1[1], corner1[0]+image.shape[0]+5])
             centloc.append([corner1[1]+image.shape[0]/2.0, corner1[0]+image.shape[0]/2.0])
@@ -129,7 +129,7 @@ def make_image_collage(files, names, outname, ra, dec, radius=100, scale=0.001, 
         vmax = scale*max([np.amax(paper) for paper in papers])
         vmin = scale*min([np.amin(paper) for paper in papers])
         for i in range(len(papers)):
-            print "plotting page",str(i+1)
+            print("plotting page",str(i+1))
             fig = plt.figure(figsize=(8.5, 11.0))
             plt.imshow(papers[i], interpolation='nearest', vmin=vmin, vmax=vmax, cmap='Greys', origin='lower', extent=[0, width-1, 0, length-1])
             textloc = texts[i][0]
