@@ -102,7 +102,8 @@ def ShockCoolingMod(t_day,R8,T5,m_c=1,late=True):
     
     #time to reach non-relativistic material
     t_c = (rho_c / (2.*((v9*g9/K1)**0.66)*(rho6**0.12)/(R85**1.3)))**(1./1.3)
-    
+
+    #late, t_c =False, 100000000
     #Luminosity and temperature model
     if t < 0:
         Lsh = 0
@@ -119,7 +120,7 @@ def ShockCoolingMod(t_day,R8,T5,m_c=1,late=True):
             v9**1.9) * (rho6**0.36) * (R85**0.83) * (t4**-0.16) #erg/s
         Tsh = ET* (2.e4) * ((g9/K2)**-0.058) * (
             v9**0.030) * (rho6**0.0058) * (R85**0.11) * (t4**-0.44) #K
-
+        
     return Lsh, Tsh #erg/s, K
 
 def ShockCoolingFit(t_day, wave, z, DM, m_c, R8, T5, t0, late=True):
@@ -153,7 +154,7 @@ def ShockCoolingMultiErr(p, t, L, L_err, z, DM, Mej):
     V_pred = np.array(V_pred) + earlyFit(t[1], p[2]*(1.+z), p[4], p[7])
     I_pred = np.array(I_pred) + earlyFit(t[2], p[2]*(1.+z), p[5], p[8]) 
     #Error
-    B_err = (B_pred - L[0])/L_err[0]/10.
+    B_err = (B_pred - L[0])/L_err[0]/1000.
     V_err = (V_pred - L[1])/L_err[1]
     I_err = (I_pred - L[2])/L_err[2]
     return np.concatenate([B_err, V_err, I_err],axis=0)
@@ -251,7 +252,7 @@ def kasenMultiErr(p, t, L, L_err, z, DM, m_c, e_51):
     V_pred = np.array(V_pred) + earlyFit(t[1], p[3]*(1.+z), p[5], p[8]) 
     I_pred = np.array(I_pred) + earlyFit(t[2], p[3]*(1.+z), p[6], p[9]) 
     #Error
-    B_err = (B_pred - L[0])/L_err[0]/10.
+    B_err = (B_pred - L[0])/L_err[0]/100.
     V_err = (V_pred - L[1])/L_err[1]
     I_err = (I_pred - L[2])/L_err[2]
     return np.concatenate([B_err, V_err, I_err],axis=0)
@@ -275,7 +276,31 @@ def kasenFixedMultiErr(p, t, L, L_err, z, DM, m_c, e_51, angle):
     V_pred = np.array(V_pred) + earlyFit(t[1], p[2]*(1.+z), p[4], p[7]) 
     I_pred = np.array(I_pred) + earlyFit(t[2], p[2]*(1.+z), p[5], p[8]) 
     #Error
-    B_err = (B_pred - L[0])/L_err[0]/10.
+    B_err = (B_pred - L[0])/L_err[0]/1000.
+    V_err = (V_pred - L[1])/L_err[1]
+    I_err = (I_pred - L[2])/L_err[2]
+    return np.concatenate([B_err, V_err, I_err],axis=0)
+
+#function: Error function for multi-band early light curve leastsq fitting
+def kasent0MultiErr(p, t, L, L_err, z, DM, m_c, e_51, t0):
+    from Cosmology import wave_0, bands
+    from LCFitting import earlyFit
+    #Kasen component p0=epoch (in rest frame), p1=a13, p2=theta
+    B_pred = np.array([KasenFit(ti, p[0], 1.0, wave_0[bands['B']], z,
+                                m_c, e_51, DM, t0)
+                       for ti in t[0]])*Kasen_isocorr(p[1])
+    V_pred = np.array([KasenFit(ti, p[0], 1.0, wave_0[bands['V']], z,
+                                m_c, e_51, DM, t0)
+                       for ti in t[1]])*Kasen_isocorr(p[1])
+    I_pred = np.array([KasenFit(ti, p[0], 1.0, wave_0[bands['i']], z,
+                                m_c, e_51, DM, t0)
+                       for ti in t[2]])*Kasen_isocorr(p[1])
+    #Power law component, p3=epoch
+    B_pred = np.array(B_pred) + earlyFit(t[0], p[2]*(1.+z), p[3], p[6]) 
+    V_pred = np.array(V_pred) + earlyFit(t[1], p[2]*(1.+z), p[4], p[7]) 
+    I_pred = np.array(I_pred) + earlyFit(t[2], p[2]*(1.+z), p[5], p[8]) 
+    #Error
+    B_err = (B_pred - L[0])/L_err[0]/1000.
     V_err = (V_pred - L[1])/L_err[1]
     I_err = (I_pred - L[2])/L_err[2]
     return np.concatenate([B_err, V_err, I_err],axis=0)
@@ -444,7 +469,28 @@ def CSMMultiErr(p, t, L, L_err, z, DM, Mej, Eej):
     V_pred = np.array(V_pred) + earlyFit(t[1], p[3]*(1.+z), p[5], p[8])
     I_pred = np.array(I_pred) + earlyFit(t[2], p[3]*(1.+z), p[6], p[9]) 
     #Error
-    B_err = (B_pred - L[0])/L_err[0]/10.
+    B_err = (B_pred - L[0])/L_err[0]/1000.
+    V_err = (V_pred - L[1])/L_err[1]
+    I_err = (I_pred - L[2])/L_err[2]
+    return np.concatenate([B_err, V_err, I_err],axis=0)
+
+#function: Error function for multi-band early light curve leastsq fitting
+def CSMt0MultiErr(p, t, L, L_err, z, DM, Mej, Eej, t0):
+    from Cosmology import wave_0, bands
+    from LCFitting import earlyFit
+    #CSM component p0=epoch (in rest frame), p1=Mext, p2=Rext
+    B_pred = np.array([CSMFit(ti, wave_0[bands['B']], z, DM, Mej, Eej,
+                              p[0], p[1], t0) for ti in t[0]])
+    V_pred = np.array([CSMFit(ti, wave_0[bands['V']], z, DM, Mej, Eej,
+                              p[0], p[1], t0) for ti in t[1]])
+    I_pred = np.array([CSMFit(ti, wave_0[bands['i']], z, DM, Mej, Eej,
+                              p[0], p[1], t0) for ti in t[2]])
+    #Power law component
+    B_pred = np.array(B_pred) + earlyFit(t[0], p[2]*(1.+z), p[3], p[6]) 
+    V_pred = np.array(V_pred) + earlyFit(t[1], p[2]*(1.+z), p[4], p[7])
+    I_pred = np.array(I_pred) + earlyFit(t[2], p[2]*(1.+z), p[5], p[8]) 
+    #Error
+    B_err = (B_pred - L[0])/L_err[0]/1000.
     V_err = (V_pred - L[1])/L_err[1]
     I_err = (I_pred - L[2])/L_err[2]
     return np.concatenate([B_err, V_err, I_err],axis=0)
