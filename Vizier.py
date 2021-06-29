@@ -114,7 +114,7 @@ def usnoB(radeg,decdeg,fovam,band,out=False): # RA/Dec in decimal degrees/J2000.
             # deal with case where no mag is reported
             #if (kw[bands[band]] != null) and (kw[banderrs[band]]) != null:
             if (kw[bands[band]] != null) and (kw[bands[band]] != empt):
-                print("Mag", kw[bands[band]], "len", len(kw[bands[band]]))
+                print(("Mag", kw[bands[band]], "len", len(kw[bands[band]])))
                 rmag = np.append(rmag,float(kw[bands[band]]))
                 #rmagerr = np.append(rmag,float(kw[banderrs[band]]))
             else:

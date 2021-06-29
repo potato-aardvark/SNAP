@@ -36,6 +36,6 @@ for filename in filenames:
     outname = outpath+imname[:-4]+'crop.fits'
 
     if os.path.exists(outname):
-        print outname+" already exists"
+        print(outname+" already exists")
     else:
         make_crop_image(filename, outname, ra, dec, size/2)

@@ -42,6 +42,6 @@ with cd(wd+"/../raw/"):
     for filename in filenames:
         outname = filename[:-3]
         if os.path.exists(outname):
-            print "Already unpacked "+outname
+            print("Already unpacked "+outname)
         else:
             subprocess.call(['funpack',filename])

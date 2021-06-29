@@ -17,11 +17,11 @@ from ObjData import *
 
 #get light curve for SN>SNthres=2.0
 t, M, M_err, F, SN, Mlim, ra, dec = LCload(files, tcol=0, magcols=6, errcols=7, fluxcols=4, SNcols=5, limcols=8, SNthres=2.0, racols=2, deccols=3, scols=9, flags=['-99.99999'], mode='multi')
-print "Maximum measured magnitudes:",[min(m) for m in M]
-print "Mean limiting magnitude:",[l.mean() for l in Mlim]
-print "Std of limiting magnitude:",[np.std(lims) for lims in Mlim]
-print "Average cadence:",[np.mean(time[1:] - time[:-1]) for time in t]
-print ""
+print("Maximum measured magnitudes:",[min(m) for m in M])
+print("Mean limiting magnitude:",[l.mean() for l in Mlim])
+print("Std of limiting magnitude:",[np.std(lims) for lims in Mlim])
+print("Average cadence:",[np.mean(time[1:] - time[:-1]) for time in t])
+print("")
 
 #crop window in data
 for i in range(len(M)):
@@ -39,14 +39,14 @@ ra_ave = '{:3.9f}'.format(ra.mean())
 dec_ave = '{:3.9f}'.format(dec.mean())
 ra_err = '{:3.9f}'.format(ra.std())
 dec_err = '{:3.9f}'.format(dec.std())
-print "Mean position of source: {: >14} {: >14}".format(ra_ave, dec_ave)
-print "Errors in mean position: {: >14} {: >14}".format(ra_err, dec_err)
-print ""
+print("Mean position of source: {: >14} {: >14}".format(ra_ave, dec_ave))
+print("Errors in mean position: {: >14} {: >14}".format(ra_err, dec_err))
+print("")
 
 #get color curve
 tc, C, C_err = LCcolors(t, M, M_err)
 
-print "Plotting data"
+print("Plotting data")
 #plot
 f, ax = plt.subplots(len(t)+len(t)-1, sharex=True) 
 ax[-1].set_xlabel("Days into 2018")
@@ -77,7 +77,7 @@ for i in range(len(t)-1):
 f.subplots_adjust(hspace=0)
 plt.show()
 
-print "plotting early data"
+print("plotting early data")
 #get light curve
 t, M, M_err, F, SN, Mlim = LCload(files, tcol=0, magcols=6, errcols=7, fluxcols=4, SNcols=5, limcols=8, SNthres=-10.0, scols=9, flags=['-99.99999'], mode='multi')
 

@@ -12,7 +12,7 @@ hdu.close()
 
 #hist, bins = np.histogram(image.flatten(), bins=100, range=(-3000, 80000))
 hist, bins = np.histogram(image.flatten(), bins=100)
-print hist, bins
+print(hist, bins)
 
 plt.bar(bins[:-1], hist, align='edge', width=bins[1:]-bins[:-1])
 plt.show()

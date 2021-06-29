@@ -47,9 +47,9 @@ for i in range(len(band)):
 
         #subtract if not already subtracted
         if os.path.exists(diffname) and os.path.exists(convname):
-            print "Already subtracted "+filename
+            print("Already subtracted "+filename)
         else:
-            print "subtracting "+filename
+            print("subtracting "+filename)
             #subtract reference image
             args = [filename, refs[i], diffname, convname, "DITemp"+str(n)]
             queue.append(pool.apply_async(basic_diff_image, args))

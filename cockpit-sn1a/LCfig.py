@@ -26,7 +26,7 @@ for i in range(len(t)):
 
 for i in range(len(t)):
     m = np.argmin(M[i])
-    print M[i][m], M_err[i][m]
+    print(M[i][m], M_err[i][m])
 
 #get KSP-OT-1 color curve
 tc, C, C_err = LCcolors(t, M, M_err)

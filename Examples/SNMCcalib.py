@@ -32,10 +32,10 @@ Nsig = 1.0
 z1 = 0.004
 z2 = 0.007
 
-print "Loading SN File"
+print("Loading SN File")
 s = get_sn(sn_file)
 
-print "Loading Calibration File"
+print("Loading Calibration File")
 SNz, SNsBV, SNsBV_err, SNdm15, SNdm15_err, SNH, SNH_err, SNJ, SNJ_err, SNY, SNY_err, SNi, SNi_err, SNV, SNV_err, SNB, SNB_err = np.loadtxt(ph_file, comments='#', usecols=(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17), unpack=True)
 SNsBV = [SNsBV[SNB<90],SNsBV[SNV<90],SNsBV[SNi<90]]
 SNsBV_err = [SNsBV_err[SNB<90],SNsBV_err[SNV<90],SNsBV_err[SNi<90]]
@@ -57,7 +57,7 @@ for i in range(len(band)):
 #don't plot fit
 s.replot = 0
 #arrays to store Monte Carlo values
-print "Performing Monte Carlo Calculations"
+print("Performing Monte Carlo Calculations")
 z = np.linspace(z1,z2,N)
 #z = np.array([0.063])
 Mdm = np.zeros([N,len(band)])
@@ -68,16 +68,16 @@ Mst_err = np.zeros([N,len(band)])
 st, st_err = np.zeros(N), np.zeros(N)
 #for each trial redshift
 for i in range(N):
-    print ""
-    print "-----------------------------"
-    print "Trial redshift", z[i]
-    print "-----------------------------"
+    print("")
+    print("-----------------------------")
+    print("Trial redshift", z[i])
+    print("-----------------------------")
     s.z = z[i]
     #fit SN dm15
     s.choose_model("EBV_model2", stype="dm15")
     s.fit(snband)
     s.kcorr()
-    print s.Tmax, s.e_Tmax
+    print(s.Tmax, s.e_Tmax)
     #t, m, e, b = s.get_max(band, restframe=1, deredden=1, use_model=1)
     dm[i] = s.dm15
     dm_err[i] = s.e_dm15
@@ -96,18 +96,18 @@ for i in range(N):
             fit, fit_err, params, params_err = LCpolyFit(t_abs, M_abs, M_err, order=6, N=30, plot=plot)
         else:
             fit, fit_err, params, params_err = LCpolyFit(t_abs, M_abs, M_err, order=8, N=30, plot=plot)
-        print params, params_err
+        print(params, params_err)
         #maximum absolute magnitude
         Mdm[i][j] = params[1]
         Mdm_err[i][j] = params_err[1]
-    print dm[i], dm_err[i]
-    print Mdm[i][0], Mdm_err[i][0]
+    print(dm[i], dm_err[i])
+    print(Mdm[i][0], Mdm_err[i][0])
 
     #fit SN sBV
     s.choose_model("EBV_model2", stype="st")
     s.fit(snband)
     s.kcorr()
-    print s.Tmax, s.e_Tmax
+    print(s.Tmax, s.e_Tmax)
     #t, m, e, b = s.get_max(band, restframe=1, deredden=1, use_model=1)
     st[i] = s.st
     st_err[i] = s.e_st
@@ -126,31 +126,31 @@ for i in range(N):
             fit, fit_err, params, params_err = LCpolyFit(t_abs, M_abs, M_err, order=6, N=30, plot=plot)
         else:
             fit, fit_err, params, params_err = LCpolyFit(t_abs, M_abs, M_err, order=8, N=30, plot=plot)
-        print params, params_err
+        print(params, params_err)
         #maximum absolute magnitude
         Mst[i][j] = params[1]
         Mst_err[i][j] = params_err[1]
-    print st[i], st_err[i]
-    print Mst[i][0], Mst_err[i][0]
+    print(st[i], st_err[i])
+    print(Mst[i][0], Mst_err[i][0])
 
-print ""
+print("")
 poly = []
 disp = []
 for i in range(len(band)):
     #fit polynomial to phillips relation, and plot
-    print "Fitting phillips relation with polynomial."
+    print("Fitting phillips relation with polynomial.")
     poly.append(np.polyfit(SNsBV[i], SNM[i], npoly))
     fitvals = np.polyval(poly[i], SNsBV[i])
     plt.errorbar(SNsBV[i],SNM[i], xerr=SNsBV_err[i],yerr=SNM_err[i], fmt='r+')
     plt.scatter(SNsBV[i], fitvals)
     disp.append(np.std(SNM[i]-fitvals))
-    print disp[i]
+    print(disp[i])
     plt.ylim(-16,-20)
     plt.xlim(1.4,0.2)
     plt.show()
 
     #remove some phillips relation outliers, and plot again
-    print "Kick out ouliers (>Nsig*dispersion from fit) and fit again."
+    print("Kick out ouliers (>Nsig*dispersion from fit) and fit again.")
     sBVcur = SNsBV[i][np.absolute(SNM[i]-fitvals)<Nsig*disp[i]]
     SNMcur = SNM[i][np.absolute(SNM[i]-fitvals)<Nsig*disp[i]]
     sBVcur_err = SNsBV_err[i][np.absolute(SNM[i]-fitvals)<Nsig*disp[i]]
@@ -162,23 +162,23 @@ for i in range(len(band)):
     disp[i] = np.sqrt(np.std(SNMcur-fitvals)**2+np.mean(SNMcur_err**2))
     chi2dof = np.sum(np.square((SNMcur-fitvals)/np.sqrt(SNMcur_err**2 + sBVcur_err**2)))/(len(fitvals)-npoly-1)#
     corr = np.corrcoef(SNMcur, sBVcur)
-    print "Fit quality"
-    print "Dispersion:",disp[i]
-    print "X2/dof:",chi2dof
-    print "Pearson Correlation:",corr
-    print "Number of phillips data points used:",len(sBVcur)
+    print("Fit quality")
+    print("Dispersion:",disp[i])
+    print("X2/dof:",chi2dof)
+    print("Pearson Correlation:",corr)
+    print("Number of phillips data points used:",len(sBVcur))
     plt.ylim(-16,-20)
     plt.xlim(1.4,0.2)
     plt.show()
-print ""
-print "Phillips Polynomial fits in B, V, I:",poly
-print "Dispersion in B, V, I:",disp
-print ""
+print("")
+print("Phillips Polynomial fits in B, V, I:",poly)
+print("Dispersion in B, V, I:",disp)
+print("")
 
 zs = []
 zs_err = []
 for i in range(len(band)):
-    print "Determine best fit redshift."
+    print("Determine best fit redshift.")
     curst = st[i]
     curst_err = st_err[i]
     curM = Mst.T[i]
@@ -186,20 +186,20 @@ for i in range(len(band)):
 
     fitvals = np.polyval(poly[i], curst)
     disps = np.sqrt(np.absolute(curM-fitvals)**2+curM_err**2)
-    print z
+    print(z)
     zs.append(z[np.argmin(disps)])
     zs_err.append(np.absolute(z[disps<disp[i]][0] - z[disps<disp[i]][-1]))
-    print ""
+    print("")
 w = 1/np.square(zs_err)
 z_mean = np.sum(zs*w)/np.sum(w)
 z_err = np.sqrt(1/np.sum(w))
-print ""
-print "---------------------------------------"
-print "Best fit redshifts by band"
-print zs, zs_err
-print "Best fit mean z:", z_mean, z_err
-print "---------------------------------------"
-print ""
+print("")
+print("---------------------------------------")
+print("Best fit redshifts by band")
+print(zs, zs_err)
+print("Best fit mean z:", z_mean, z_err)
+print("---------------------------------------")
+print("")
 
 #colorbar parameterized by redshift
 norm = mpl.colors.Normalize(vmin=z[0],vmax=z[-1])
@@ -221,7 +221,7 @@ ax[0][1].text(1.95,-19.2,"B", fontsize = 14, fontstyle='italic', fontweight='bol
 ax[1][1].text(1.95,-19.2,"V", fontsize = 14, fontstyle='italic', fontweight='bold')
 ax[2][1].text(1.95,-19.2,"I", fontsize = 14, fontstyle='italic', fontweight='bold')
 
-print "Plotting Phillips Data"
+print("Plotting Phillips Data")
     
 for i in range(len(band)):
     ax[i][1].errorbar(SNdm15[i],SNM[i], xerr=SNdm15_err[i],yerr=SNM_err[i], fmt='r+')

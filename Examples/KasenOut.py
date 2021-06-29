@@ -44,20 +44,20 @@ e_51_err = 0.20
 band = ['B','V','i']
 Band = ['B','V','I']
 
-print "loading binned data"
+print("loading binned data")
 #N300-1.Q0.SN binned time series data files
 Bfile = "N300-1.Q0.B.005703D193-370223D6.150625-160111.var.lcbin.CN_170804.txt"
 Vfile = "N300-1.Q0.V.005703D193-370223D6.150625-160111.var.lcbin.CN_170804.txt"
 Ifile = "N300-1.Q0.I.005703D193-370223D6.150625-160111.var.lcbin.CN_170804.txt"
 binfiles = [Bfile, Vfile, Ifile] 
-print "Loading binned early light curve."
+print("Loading binned early light curve.")
 #get N300-1.Q0.SN binned light curve
 t, M, M_err, F, SN, Mlim = LCload(binfiles, tcol=0, magcols=6, errcols=7, fluxcols=4, SNcols=5, limcols=8, SNthres=-10.0, scols=9, flags=['-99.99999'], mode='multi')
 #get noise in flux
 F_err = [F[i]/SN[i] for i in range(3)]
 
 #deredden flux and get templates
-print "Correcting for galactic reddening"
+print("Correcting for galactic reddening")
 tlim = []
 Flim = []
 for i in range(len(F)):
@@ -87,20 +87,20 @@ outfile = open("log.txt", 'a')
 outfile.write("Starting computation\n")
 outfile.close()
 
-print "Computing viewing angles at given separation distance"
+print("Computing viewing angles at given separation distance")
 #list of sample models
 a13s = 0.15
 a13s = float(sys.argv[-2])
 outfilename = sys.argv[-1]
 confs = [68.27, 99.54, 99.73]
-print [norm.ppf(conf/100.0) for conf in confs]
-print a13s
+print([norm.ppf(conf/100.0) for conf in confs])
+print(a13s)
 #list of viewing angles
 thetas = np.linspace(0,180,100)
 
 #function: test a given a13
 def test_a13(a13, sig):
-    print a13
+    print(a13)
     #boolean mask for whether angle is ruled out to given confidence
     mask = np.array([True]*len(thetas))
     #for each band
@@ -144,7 +144,7 @@ outfile.write("Trying confidences\n")
 outfile.close()
 
 for n, conf in enumerate(confs):
-    print conf
+    print(conf)
     outfile = open("log.txt", 'a')
     outfile.write(str(conf)+"\n")
     outfile.close()
@@ -152,7 +152,7 @@ for n, conf in enumerate(confs):
     sig = norm.ppf(conf/100.0)
     #calculate test of a13
     outangles = test_a13(a13s, sig)
-    print outangles, conf
+    print(outangles, conf)
     #output
     outfile = open(outfilename, 'a')
     outfile.write("\t".join([conf, outangles])+"\n")

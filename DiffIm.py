@@ -77,7 +77,7 @@ def basic_diff_image(src_name, ref_name, out_name, conv_name, tmpdir="DITemp", d
         subprocess.call(default_flags)
 
         print("SUBTRACTION COMPLETE")
-        print("output:",out_name)
+        print(("output:",out_name))
         
     finally:
         if delete_temp:
@@ -96,30 +96,30 @@ def make_diff_image(src_name, ref_name, out_name, conv_name, tmp_fwhm=None, src_
 
         #figure out band
         band = src_name.split('.')[2]
-        print ""
-        print "Band =", band
+        print("")
+        print("Band =", band)
 
         #check which image is better
         if src_fwhm is not None and tmp_fwhm is not None:
             if src_fwhm < tmp_fwhm:
-                print "Image is better than template."
+                print("Image is better than template.")
                 sigma_match = np.sqrt(tmp_fwhm**2 - src_fwhm**2)/2.
                 fwhm_c = tmp_fwhm
                 fwhm_f = src_fwhm
                 better = 'i'
             else:
-                print "Template is better than image."
+                print("Template is better than image.")
                 sigma_match = np.sqrt(src_fwhm**2 - tmp_fwhm**2)/2.
                 fwhm_c = src_fwhm
                 fwhm_f = tmp_fwhm
                 better = 't'
         else:
-            print "Assuming template is better."
+            print("Assuming template is better.")
             sigma_match = None
             fwhm_c = None
             fwhm_f = None
             better = 't'
-        print ""
+        print("")
 
         #make temporary directory
         if not os.path.exists(tmpdir):
@@ -154,7 +154,7 @@ def make_diff_image(src_name, ref_name, out_name, conv_name, tmp_fwhm=None, src_
         subprocess.call(['hotpants'] + flags)
 
         print("SUBTRACTION COMPLETE")
-        print("output:",out_name)
+        print(("output:",out_name))
         
     finally:
         if delete_temp:

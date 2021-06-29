@@ -23,14 +23,14 @@ from SNAP.Analysis.LCFitting import*
 sn_file = "N300-1.Q0.SN.txt"
 plot = False #plot polynomial fits to light curves
 
-print "Loading SN File"
+print("Loading SN File")
 s = get_sn(sn_file)
 #s.z = z
-print s.z
+print(s.z)
 z = s.z
 zerr = 0.003
 n = 50 #number of monte carlo trials
-print 3663.0/(1+s.z), 8750/(1+s.z)
+print(3663.0/(1+s.z), 8750/(1+s.z))
 
 #Bands in light curve
 band = ['B','V','i']
@@ -53,7 +53,7 @@ sBs = []
 dzs = np.random.normal(0,zerr,n)
 for i in range(n):
     s.z = z+dzs[i]
-    print i, s.z
+    print(i, s.z)
     #luminosity distance
     dl = intDl(s.z)
     #distance modulus
@@ -65,7 +65,7 @@ for i in range(n):
                                   lam2=8750/(1+s.z),
                                   DM=DM,
                                   use_stretch=True)
-    print len(sB)
+    print(len(sB))
     sBs.append(sB)
 sBs = np.array(sBs)
 sB = sBs.mean(axis=0)
@@ -81,7 +81,7 @@ tfit, sfit, sfiterr = LCcrop(tB, t1, t2, sB, M_err=sBerr)
 #perform fit to find peak of function
 
 fit, fit_err, params, params_err = LCpolyFit(tfit, -sfit, sfiterr, order=4, N=1000, plot=True)
-print params, params_err
+print(params, params_err)
 
 #draw some points around max by monte carlo
 N=10000
@@ -94,9 +94,9 @@ x2cent = (np.square((-params[1]-Lmax)/Lmax_err) + np.square((-t0-tmax)/tmax_err)
 x2edge = (np.square((-params[1]+Lmax_err-Lmax)/Lmax_err) + np.square((-t0+t0_err-tmax)/tmax_err)).sum()
 x2diff = x2edge - x2cent
 
-print np.sqrt(x2cent)
+print(np.sqrt(x2cent))
 
-print "Fitting Arnett Function to Peak of LC"
+print("Fitting Arnett Function to Peak of LC")
 p1 = np.linspace(0.275,0.285,10)
 p2 = np.linspace(1.15,1.25,10)
 p1, p2 = np.meshgrid(p1, p2)
@@ -107,12 +107,12 @@ p = np.array([p1,p2]).T
 chi2 = np.zeros(len(p))
 for i in range(len(p)):
     chi2[i] = np.square(ArnettMaxErr(p[i], tmax, tmax_err, Lmax, Lmax_err)).sum()
-    print i, chi2[i]
+    print(i, chi2[i])
 chiarg = (chi2-x2cent)<x2diff
 chimin = np.argmin(chi2)
 popt = p[chimin]
 perr = p[chiarg].std(axis=0)
-print popt, perr
+print(popt, perr)
 
 #p0 = [0.27, 1.2]
 #popt, cov_x, infodict, mesg, ier = leastsq(ArnettMaxErr, p0, args=(tmax, tmax_err, Lmax, Lmax_err), full_output=1, ftol=1.49012e-10, xtol=1.49012e-10, factor=0.01)
@@ -121,11 +121,11 @@ print popt, perr
 MNi, MNi_err = popt[0], perr[0]
 vej, vej_err = 11.0, 1.0
 Mej, Mej_err, Eej, Eej_err = ArnettMejE(popt[1],perr[1],vej*10**8,vej_err*10**8)
-print popt, perr
-print "Assumed ejecta velocity:", vej, vej_err, "km/s"
-print "Nickel mass:", MNi, MNi_err, "Msun"
-print "Ejecta mass:", Mej, Mej_err, "Msun"
-print "Ejecta Ek:", Eej, Eej_err, "x10^51ergs"
+print(popt, perr)
+print("Assumed ejecta velocity:", vej, vej_err, "km/s")
+print("Nickel mass:", MNi, MNi_err, "Msun")
+print("Ejecta mass:", Mej, Mej_err, "Msun")
+print("Ejecta Ek:", Eej, Eej_err, "x10^51ergs")
 
 t_arnett = np.arange(0.25,103.25,0.25)
 L_arnett = ArnettFit(t_arnett, *popt)
@@ -133,9 +133,9 @@ plt.plot(t_arnett, L_arnett)
 plt.errorbar(tmax, Lmax, xerr=tmax_err, yerr=Lmax_err, fmt='r+')
 plt.show()
 logL_arnett = np.log10(L_arnett)
-print max(logL_arnett)
+print(max(logL_arnett))
 
-print "plotting peak fit"
+print("plotting peak fit")
 #plot Arnett fit
 #gotta get error of fit somehow
 #plt.title('Arnett Fitted to UVOIR Bolometric Light Curve')

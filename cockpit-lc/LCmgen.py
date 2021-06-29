@@ -79,21 +79,21 @@ f_done = []
 for i in range(Nobj):
     #generate output files if they don't already exist
     if os.path.exists(outBname[i]) and os.path.exists(outVname[i]) and os.path.exists(outIname[i]):
-        print "Continuing "+outBname[i]
-        print "Continuing "+outVname[i]
-        print "Continuing "+outIname[i]
+        print("Continuing "+outBname[i])
+        print("Continuing "+outVname[i])
+        print("Continuing "+outIname[i])
         #load list of already processed files
         fB_done = np.loadtxt(outBname[i], dtype=str, comments=';', usecols=[1])
         fV_done = np.loadtxt(outVname[i], dtype=str, comments=';', usecols=[1])
         fI_done = np.loadtxt(outIname[i], dtype=str, comments=';', usecols=[1])
         f_done.append([fB_done, fV_done, fI_done])
-        print "Already done list:"
-        print f_done
+        print("Already done list:")
+        print(f_done)
         outs.append([outBname[i], outVname[i], outIname[i]])
     else:
-        print "Starting "+outBname[i]
-        print "Starting "+outVname[i]
-        print "Starting "+outIname[i]
+        print("Starting "+outBname[i])
+        print("Starting "+outVname[i])
+        print("Starting "+outIname[i])
         os.system('touch '+outBname[i])
         os.system('touch '+outVname[i])
         os.system('touch '+outIname[i])
@@ -119,15 +119,15 @@ files = sorted(glob('../crop/'+prefix+'*.fits'))
 #generate light curve
 for i in range(len(files)):
     filename = files[i].split('/')[-1]
-    print "Computing file "+str(i+1)+"/"+str(len(files))+": "+filename
+    print("Computing file "+str(i+1)+"/"+str(len(files))+": "+filename)
     #decipher information from KMTNet filename convention
     fo = '.'.join(filename.split('.')[2:5])
     band = fo[0]
 
     if fo in f_done[0][bindex[band]]:
-        print "Already processed "+fo
+        print("Already processed "+fo)
     else:
-        print "Processing "+fo
+        print("Processing "+fo)
         #compute magnitude
         Mtest = True
         so = "_"
@@ -138,7 +138,7 @@ for i in range(len(files)):
             Mtest = False
             so = "FITS_ERROR"
             to = 0
-            print "Critical error loading image!"
+            print("Critical error loading image!")
 
         if Mtest:
             #get moon ephemeris
@@ -205,11 +205,11 @@ for i in range(len(files)):
                 RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = [-99.9999999]*Nobj, [-99.9999999]*Nobj, [-99.99999]*Nobj, [-99.99]*Nobj, [-99.999]*Nobj, [-99.999]*Nobj, -99.999
                 so = "PSF_ERROR"
                 Mtest = False
-                print "PSF can't be extracted!"
+                print("PSF can't be extracted!")
             except: #General catastrophic failure
                 RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = [-99.9999999]*Nobj, [-99.9999999]*Nobj, [-99.99999]*Nobj, [-99.99]*Nobj, [-99.999]*Nobj, [-99.999]*Nobj, -99.999
                 Mtest = False
-                print "Unknown catastrophic failure!"
+                print("Unknown catastrophic failure!")
 
         else:
             RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = [-99.9999999]*Nobj, [-99.9999999]*Nobj, [-99.99999]*Nobj, [-99.99]*Nobj, [-99.999]*Nobj, [-99.999]*Nobj, -99.999
@@ -224,14 +224,14 @@ for i in range(len(files)):
             if Mlimo < 0:
                 so = "INCONV"
         
-        print ""
+        print("")
         for j in range(Nobj):
             #format output
             out = rowGen(to,fo,RAo[j],DECo[j],Io[j],SNo[j],Mo[j],Mo_err[j],Mlimo,so)
-            print name[j]+" : "+out
+            print(name[j]+" : "+out)
 
             if band in bands:
                 outfile = open(outs[j][bindex[band]], 'a')
                 outfile.write(out)
                 outfile.close()
-        print ""
+        print("")

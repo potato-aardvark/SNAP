@@ -34,11 +34,11 @@ for i in range(len(M)):
 for i in range(len(t)):
     #write header for band data
     out.write("filter "+band[i]+"\n")
-    print "Writing "+band[i]
+    print("Writing "+band[i])
     #for each line in light curve, write to file
     for j in range(len(t[i])):
         out.write(padstl(str(t[i][j]),11)+"\t"+padstl(str(M[i][j]),8)+"\t"+padstl(str(M_err[i][j]),7)+"\n")
-print "DONE"
+print("DONE")
 
 
 

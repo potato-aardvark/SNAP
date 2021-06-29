@@ -233,7 +233,7 @@ def Sersic_integrate(Ie,re,n,e,f=0.9):
             elif I_diff>=0.00001:
                 b_test=b_test*b_irate
             bn = b_test
-        print("n={} --> b(n)={}".format(n, bn))
+        print(("n={} --> b(n)={}".format(n, bn)))
     return np.pi*re**2*Ie*2*n*gamma(2*n)*np.power(np.e, bn)/np.power(bn, 2*n)*f
     
 

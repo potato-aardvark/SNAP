@@ -42,7 +42,7 @@ def SEDinterp(t, bands, SED_ts, SED_lcs, SED_errs=None,
         #check coverage
     for i in range(Nw):
         if bandmask[i] and (t > max(SED_ts[i]) or t < min(SED_ts[i])):
-            print("Incomplete coverage in lc "+str(i)+", masking...")
+            print(("Incomplete coverage in lc "+str(i)+", masking..."))
             bandmask[i] = False
     #check if some bands are masked
     SED_ts = lmask(SED_ts, bandmask)
@@ -454,15 +454,15 @@ def fitExtBlackbod(waves, fluxes, fluxerrs=None, EBV=None, plot=False, ptitle=""
     r, rerr = popt[1], perr[1] #dimensionless
     if EBV is None:
         EBV, EBVerr = popt[2], perr[2] #mag
-        print "E(B-V) for Rv=3.1:", EBV, EBVerr
+        print(("E(B-V) for Rv=3.1:", EBV, EBVerr))
     else:
         EBVerr = 0
     #plot fit if given
     if plot:
         import matplotlib.pyplot as plt
 
-        print "Temperature [K]:", T, Terr
-        print "Received/Emitted:", r, rerr
+        print(("Temperature [K]:", T, Terr))
+        print(("Received/Emitted:", r, rerr))
         if fluxerrs is not None:
             plt.errorbar(waves, fluxes, yerr=fluxerrs, fmt='g+')
         else:

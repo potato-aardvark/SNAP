@@ -85,9 +85,9 @@ def headGen():
 
 #generate output files if they don't already exist
 if os.path.exists(outBname) and os.path.exists(outVname) and os.path.exists(outIname):
-    print "Continuing "+outBname
-    print "Continuing "+outVname
-    print "Continuing "+outIname
+    print("Continuing "+outBname)
+    print("Continuing "+outVname)
+    print("Continuing "+outIname)
     #load list of already processed files
     fB_done = np.loadtxt(outBname, dtype=str, comments=';', usecols=[1])
     fV_done = np.loadtxt(outVname, dtype=str, comments=';', usecols=[1])
@@ -95,9 +95,9 @@ if os.path.exists(outBname) and os.path.exists(outVname) and os.path.exists(outI
     f_done = [fB_done, fV_done, fI_done]
     outs = [outBname, outVname, outIname]
 else:
-    print "Starting "+outBname
-    print "Starting "+outVname
-    print "Starting "+outIname
+    print("Starting "+outBname)
+    print("Starting "+outVname)
+    print("Starting "+outIname)
     os.system('touch '+outBname)
     os.system('touch '+outVname)
     os.system('touch '+outIname)
@@ -130,9 +130,9 @@ for i in range(len(bands)):
         #bin all that remains
         t_bin = t[i][mask].mean()
         bin_names = f[i][mask]
-        print "Binning the following files:"
+        print("Binning the following files:")
         bin_files = [glob('../raw/'+prefix+name+'*.fits')[0] for name in bin_names]
-        print bin_files
+        print(bin_files)
         out_base = bindir+prefix+bands[i]+'.'+bin_names[0][2:-2]+'-'+bin_names[-1][2:-2]+".coadd."
         out_name = out_base+'fits'
         wt_name = out_base+'weight.fits'
@@ -144,9 +144,9 @@ for i in range(len(bands)):
         fo = bands[i]+'.'+bin_names[0][2:-2]+'-'+bin_names[-1][2:-2]
 
         if fo in f_done[bindex[band]]:
-            print "Already processed "+fo
+            print("Already processed "+fo)
         else:
-            print "Processing "+fo
+            print("Processing "+fo)
             #swarp files between t1 and t2
             subprocess.call(['swarp','-COMBINE_TYPE','SUM','-IMAGEOUT_NAME',
                              out_name,'-WEIGHTOUT_NAME',wt_name,'-XML_NAME',
@@ -162,7 +162,7 @@ for i in range(len(bands)):
                 Mtest = False
                 so = "FITS_ERROR"
                 to = 0
-                print "Critical error loading image!"
+                print("Critical error loading image!")
 
             if Mtest:
                 try:
@@ -204,11 +204,11 @@ for i in range(len(bands)):
                     RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = -99.9, -99.9, -99.99999, -99.99, -99.999, -99.999, -99.999
                     so = "PSF_ERROR"
                     Mtest = False
-                    print "PSF can't be extracted!"
+                    print("PSF can't be extracted!")
                 except: #General catastrophic failure
                     RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = -99.9, -99.9, -99.99999, -99.99, -99.999, -99.999, -99.999
                     Mtest = False
-                    print "Unknown catastrophic failure!"
+                    print("Unknown catastrophic failure!")
             else:
                 RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = -99.9, -99.9, -99.99999, -99.99, -99.999, -99.999, -99.999
 
@@ -223,7 +223,7 @@ for i in range(len(bands)):
 
             #format output
             out = rowGen(to,fo,RAo,DECo,Io,SNo,Mo,Mo_err,Mlimo,so)
-            print out+'\n'
+            print(out+'\n')
 
             if band in bands:
                 outfile = open(outs[bindex[band]], 'a')

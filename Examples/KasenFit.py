@@ -44,7 +44,7 @@ e_51_err = 0.20
 band = ['B','V','i']
 Band = ['B','V','I']
 
-print "loading binned data"
+print("loading binned data")
 #N300-1.Q0.SN binned time series data files
 Bfile = "N300-1.Q0.B.005703D193-370223D6.150625-160111.var.lcbin.CN_180330.S05.txt"
 Vfile = "N300-1.Q0.V.005703D193-370223D6.150625-160111.var.lcbin.CN_180330.S05.txt"
@@ -57,7 +57,7 @@ Bfile = "N300-1.Q0.B.005703D193-370223D6.150625-160111.var.lcbin.CN_180330.S16.t
 Vfile = "N300-1.Q0.V.005703D193-370223D6.150625-160111.var.lcbin.CN_180330.S16.txt"
 Ifile = "N300-1.Q0.I.005703D193-370223D6.150625-160111.var.lcbin.CN_180330.S16.txt"
 binfiles = [Bfile, Vfile, Ifile] 
-print "Loading binned early light curve."
+print("Loading binned early light curve.")
 #get N300-1.Q0.SN binned light curve
 t, M, M_err, F, SN, Mlim2 = LCload(binfiles, tcol=0, magcols=6, errcols=7, fluxcols=4, SNcols=5, limcols=8, SNthres=-10.0, scols=9, flags=['-99.99999'], mode='multi')
 #get noise in flux
@@ -66,7 +66,7 @@ F_err = [F[i]/SN[i] for i in range(3)]
 limconf = [Mlim1, Mlim2]
 
 #deredden flux and get templates
-print "Correcting for galactic reddening"
+print("Correcting for galactic reddening")
 flimconf = limconf
 for i in range(len(F)):
     #correct fluxes for AB calibration
@@ -423,20 +423,20 @@ plt.show()
 """
 
 
-print "Computing viewing angles at each separation distance"
+print("Computing viewing angles at each separation distance")
 #list of sample models
 #a13s = np.arange(6.01,10.01,0.1) #1RG, 6MS, 2MS
 a13s = np.concatenate((np.arange(0.001,0.05,0.005), np.arange(0.05,0.2,0.02), np.arange(0.2, 2.0, 0.05), np.arange(2.0,11.0,1.0)))
 #SNR of 1, 2 3 respectively
 confs = [68.27, 95.45]
-print [norm.ppf(conf/100.0) for conf in confs]
-print a13s
+print([norm.ppf(conf/100.0) for conf in confs])
+print(a13s)
 #list of viewing angles
 thetas = np.linspace(0,180,100)
 
 #function: test a given a13
 def gen_a13(a13):
-    print a13
+    print(a13)
     #for each band
     Fks = []
     Fk_errs = []
@@ -467,12 +467,12 @@ def gen_a13(a13):
         #for each angle
         Fks.append(Fk)
         Fk_errs.append(Fk_err)
-    print "done", a13
+    print("done", a13)
     return Fks, Fk_errs
 
 def test_a13(gen, gen_err, sig, flim):
     #boolean mask for whether angle is ruled out to given confidence
-    print sig
+    print(sig)
     mask = np.array([True]*len(thetas))
     
     for i in range(len(t)):
@@ -494,7 +494,7 @@ def test_a13(gen, gen_err, sig, flim):
 
 nproc = 32
 
-print "Generating Synthetic Light Curves"
+print("Generating Synthetic Light Curves")
 #generate synthetic light curves
 pool = Pool(nproc)
 procs = []
@@ -503,15 +503,15 @@ for j, a13 in enumerate(a13s):
     procs.append(pool.apply_async(gen_a13, [a13]))
 #array to hold percent of viewing angles ruled out at each conf
 genlcs = []
-print "Processes", len(procs)
+print("Processes", len(procs))
 for n, proc in enumerate(procs):
-    print "getting proc",n
+    print("getting proc",n)
     genlcs.append(proc.get())
-    print "got proc",n
+    print("got proc",n)
 pool.terminate()
-print "Generated Light Curves"
+print("Generated Light Curves")
 
-print "Checking Against Observations"
+print("Checking Against Observations")
 #style = ['k:', 'k--', 'k-']
 outangles = []
 #for each confidence interval
@@ -527,7 +527,7 @@ for n, conf in enumerate(confs):
         Fk_errs = genlcs[j][1]
         procs.append(pool.apply_async(test_a13, [Fks, Fk_errs, sig, flimconf[n]]))
         if n == 2 and a13 > 0.195 and a13 < 0.205 and False:
-            print "plotting section"
+            print("plotting section")
             #plot section
             f, ax = plt.subplots(len(t), sharex=True) 
             for i in range(len(t)):
@@ -541,7 +541,7 @@ for n, conf in enumerate(confs):
     #array to hold percent of viewing angles ruled out at each conf
     outangles.append([proc.get() for proc in procs])
     pool.terminate()
-print "Checked Observations"
+print("Checked Observations")
     
     #At this conf, we can plot ruled out angles vs a13
     #print conf, outangles

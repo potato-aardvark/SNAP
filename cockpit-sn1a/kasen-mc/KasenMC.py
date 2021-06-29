@@ -28,7 +28,7 @@ from ObjData import *
 m_c = m_ej/1.4 #*1.4 Mchandra
 m_c_err = m_ej_err/1.4
 
-print "loading binned data"
+print("loading binned data")
 #load binned early LC
 t, M, M_err, F, SN, Mlim = LCload(files, tcol=0, magcols=7, errcols=8, fluxcols=5, SNcols=6, limcols=9, SNthres=-10.0, scols=10, flags=['-99.99999'], mode='multi')
 #get noise in flux
@@ -44,11 +44,11 @@ for i in range(len(limSNs)):
     #crop to relevant window
     for j in range(len(t)):
         tc[j], Mlimc[j] = LCcrop(tc[j], t1_early, t2_early, Mlimc[j])
-        print len(Mlimc[j])
+        print(len(Mlimc[j]))
     limconf.append(Mlimc)
 
 #deredden flux and shift light curve
-print "Correcting for galactic reddening"
+print("Correcting for galactic reddening")
 flimconf = np.copy(limconf)
 for i in range(len(t)):
     #correct fluxes for galactic reddening
@@ -66,7 +66,7 @@ for i in range(len(t)):
 
 ###################################################################
 
-print "Computing viewing angles at each separation distance"
+print("Computing viewing angles at each separation distance")
 #list of sample models
 a13s = np.concatenate((np.arange(0.001,0.05,0.005), np.arange(0.05,0.2,0.02), np.arange(0.2, 2.0, 0.05), np.arange(2.0,11.0,1.0)))
 
@@ -77,10 +77,10 @@ a13s = np.concatenate((np.arange(0.001,0.05,0.005), np.arange(0.05,0.2,0.02), np
 thetas = np.linspace(0,180,100)
 #SNR of 1, 2, 3, 4, 5
 confs = [norm.cdf(sn) for sn in limSNs]
-print "Confidence levels:",confs
-print "Sigma levels:",limSNs
-print "Trial a13s:", a13s
-print "Trial thetas:",thetas
+print("Confidence levels:",confs)
+print("Sigma levels:",limSNs)
+print("Trial a13s:", a13s)
+print("Trial thetas:",thetas)
 
 #Note in log for reference
 outfile = open(logfile, 'a')
@@ -90,7 +90,7 @@ outfile.close()
 
 #function: test a given a13
 def gen_a13(a13, conf):
-    print "Generating model at a13:",a13
+    print("Generating model at a13:",a13)
     #for each band
     Fks = []
     Fk_errs = []
@@ -110,12 +110,12 @@ def gen_a13(a13, conf):
             #No covariance simulation needed.
         Fks.append(Fk)
         Fk_errs.append(Fk_err)
-    print "done model at a13:", a13
+    print("done model at a13:", a13)
     return Fks, Fk_errs
 
 def test_a13(gen, gen_err, sig, flim):
     #boolean mask for whether angle is ruled out to given confidence
-    print "Testing model at sig:", sig
+    print("Testing model at sig:", sig)
     mask = np.array([True]*len(thetas))
     
     for i in range(len(t)):
@@ -135,7 +135,7 @@ def test_a13(gen, gen_err, sig, flim):
 
 nproc = 32
 
-print "Generating Synthetic Light Curves"
+print("Generating Synthetic Light Curves")
 #generate synthetic light curves
 pool = Pool(nproc)
 procs = []
@@ -146,15 +146,15 @@ for j, a13 in enumerate(a13s):
 #array to hold generated light curves
 genlcs = []
 #get processes
-print "Processes", len(procs)
+print("Processes", len(procs))
 for n, proc in enumerate(procs):
-    print "getting proc",n
+    print("getting proc",n)
     genlcs.append(proc.get())
-    print "got proc",n
+    print("got proc",n)
 pool.terminate()
-print "Generated Light Curves"
+print("Generated Light Curves")
 
-print "Checking Against Observations"
+print("Checking Against Observations")
 outangles = []
 #for each confidence interval
 for n, conf in enumerate(confs):
@@ -186,10 +186,10 @@ for n, conf in enumerate(confs):
     #percent of viewing angles ruled out for each a13 model at this conf
     outangles.append([proc.get() for proc in procs])
     pool.terminate()
-print "Checked Against Observations."
-print "DONE!"    
+print("Checked Against Observations.")
+print("DONE!")    
 
-print "Saving..."
+print("Saving...")
 #Output ruled out angles vs a13
 outangles = np.array(outangles)
 out = np.concatenate(([a13s], outangles), axis=0)

@@ -21,7 +21,7 @@ from ObjData import *
 
 plot = False #plot polynomial fits to light curves
 
-print "Loading binned early light curve."
+print("Loading binned early light curve.")
 #get N300-1.Q0.SN binned light curve
 t, M, M_err, F, SN, Mlim = LCload(binfiles, tcol=0, magcols=7, errcols=8, fluxcols=5, SNcols=6, limcols=9, SNthres=-10.0, scols=10, flags=['-99.99999'], mode='multi')
 
@@ -45,16 +45,16 @@ for i in range(len(M)):
     #F[i] = F[i] - bg[i]
     #F_err[i] = np.sqrt(np.square(F_err[i])+np.square(bg_err[i]))
 
-print "Loading reliable total light curve"
+print("Loading reliable total light curve")
 #get absolute fluxes
 s = get_sn(sn_file)
 #don't plot fit
 s.replot = 0
 #fit model
 s.choose_model("EBV_model2", stype="st")
-print "Performing SNpy fit and conversion of LC to rest frame"
+print("Performing SNpy fit and conversion of LC to rest frame")
 s.fit(band)
-print "Tmax ", s.Tmax, s.e_Tmax
+print("Tmax ", s.Tmax, s.e_Tmax)
 Flim = Mlim
 for i in range(len(F)):
     F[i] = deredFlux(F[i], EBVgal, Coefs[i])
@@ -72,13 +72,13 @@ for i in range(len(F)):
     #get Max centered dilated time
     t[i] = absTime(t[i]-s.Tmax, z)
 
-print "Converting early LC to rest frame normalized luminosity"
+print("Converting early LC to rest frame normalized luminosity")
 #scale luminosity as fraction of max lum
 L_err = [l/maxes[i] for i, l in enumerate(F_err)]
 L = [l/maxes[i] for i, l in enumerate(F)]
 Llim = [l/maxes[i] for i, l in enumerate(Flim)]
 
-print "plotting early data"
+print("plotting early data")
 #plot
 f, ax = plt.subplots(3, sharex=True)
 ax[-1].set_xlabel("t rest [days]")
@@ -89,7 +89,7 @@ for i in range(len(t)):
     #ax[i].scatter(t[i],Llim[i],c='r',marker='v')
 plt.show()
 
-print "Fitting power law to section of early light curve"
+print("Fitting power law to section of early light curve")
 #for each band crop to right section
 f = 0.4 #fit up to 40% of maximum flux (Olling 2015)
 t = [time[L[i]<f] for i, time in enumerate(t)]
@@ -103,14 +103,14 @@ p0 = [-16.7120900068, 0.0057208154898343525, 0.0074170018284233702, 0.0199455587
 n = 100000 #number of perturbations
 randomdataY = [L]
 for j in range(n):
-    print str(j+1)+"/"+str(n)
+    print(str(j+1)+"/"+str(n))
     L_pert = []
     for i in range(len(t)):
         L_pert.append(L[i] + np.random.normal(0., L_err[i], len(L[i])))
     randomdataY.append(L_pert)
-print "Fitting bootstrap using 4 processes"
+print("Fitting bootstrap using 4 processes")
 x, err_x = fit_bootstrap(p0, t, randomdataY, L_err, earlyMultiErr, errfunc=True, perturb=False, n=3000, nproc=4)
-print "Fitting bootstrap using better initial parameters"
+print("Fitting bootstrap using better initial parameters")
 x, err_x = fit_bootstrap(x, t, randomdataY, L_err, earlyMultiErr, errfunc=True, perturb=False, n=3000, nproc=4)
 
 #interpret results
@@ -121,15 +121,15 @@ a = [x[4],x[5],x[6]]
 a_err = [err_x[4],err_x[5],err_x[6]]
 x2dof = np.sqrt(np.square(earlyMultiErr(x, t, L, L_err)).sum())/(len(L[0])+len(L[1])+len(L[2])-len(x))
 #output data
-print ""
-print "Epoch of first light in rest frame:", t0, t0_err
-print "Epoch of first light in obs frame:", t0*(1.0+z), np.absolute(t0*(1.0+z)*np.sqrt(np.square(zerr/(1.0+z))+np.square(t0_err/t0)))
-print "Coefficient", C, C_err
-print "Power:", a, a_err
-print "Fit Chi2/dof", x2dof
-print ""
+print("")
+print("Epoch of first light in rest frame:", t0, t0_err)
+print("Epoch of first light in obs frame:", t0*(1.0+z), np.absolute(t0*(1.0+z)*np.sqrt(np.square(zerr/(1.0+z))+np.square(t0_err/t0))))
+print("Coefficient", C, C_err)
+print("Power:", a, a_err)
+print("Fit Chi2/dof", x2dof)
+print("")
 
-print "Plotting early fit"
+print("Plotting early fit")
 #plot
 f, ax = plt.subplots(3, sharex=True)
 ax[-1].set_xlabel("Days from peak", fontsize = 14)

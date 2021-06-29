@@ -22,7 +22,7 @@ image, time, wcs = loadFits(filename, year=2016, getwcs=True, verbosity=1)
 x0, y0 = np.zeros(len(RA)), np.zeros(len(DEC))
 for i in range(len(x0)):
     x0[i], y0[i] = wcs.all_world2pix(RA[i], DEC[i], 0)
-print x0[0], y0[0]
+print(x0[0], y0[0])
 
 """
 intens, x, y = ap_multi(image, x0, y0, [1]*len(names), 0, 15)
@@ -41,4 +41,4 @@ plt.show()
 
 RA, DEC, I, SN, M, Merr, Mlim = magnitude(image, image, wcs, 'aavso', 'E489-1.Q0.AAVSO.cat', (RA,DEC), radius=2000.0, psf=psftype, name=names, band='B', fwhm=5.0, limsnr=2.0, satmag=15.0, refmag=16.0, fitsky=fitsky, satpix=40000.0, verbosity=2)
 #output position, magnitude
-print time, RA, DEC, I, SN, M, Merr, Mlim
+print(time, RA, DEC, I, SN, M, Merr, Mlim)

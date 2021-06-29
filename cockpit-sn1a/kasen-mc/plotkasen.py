@@ -18,7 +18,7 @@ a13s = outs[0]
 outangles = outs[1:]
 for n, sn in enumerate(limSNs):
     if sn in plot:
-        print "Sig and conf:", sn, norm.cdf(sn)
+        print("Sig and conf:", sn, norm.cdf(sn))
         #Plot angles ruled out for each a13 at this conf
         plt.plot(a13s, outangles[n], style[plot[sn]])
 

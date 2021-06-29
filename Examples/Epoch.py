@@ -35,20 +35,20 @@ binBfile = "N300-1.Q0.B.005703D193-370223D6.150625-160111.var.lcbin.CN_170804.tx
 binVfile = "N300-1.Q0.V.005703D193-370223D6.150625-160111.var.lcbin.CN_170804.txt"
 binIfile = "N300-1.Q0.I.005703D193-370223D6.150625-160111.var.lcbin.CN_170804.txt"
 binfiles = [binBfile, binVfile, binIfile] 
-print "Loading binned early light curve."
+print("Loading binned early light curve.")
 #get N300-1.Q0.SN binned light curve
 t, M, M_err, F, SN, Mlim = LCload(binfiles, tcol=0, magcols=6, errcols=7, fluxcols=4, SNcols=5, limcols=8, SNthres=-10.0, scols=9, flags=['-99.99999'], mode='multi')
 #get noise in flux
 F_err = [F[i]/SN[i] for i in range(3)]
 
-print "Loading reliable total light curve"
+print("Loading reliable total light curve")
 #get absolute fluxes
 s = get_sn("N300-1.Q0.SN.txt")
 #don't plot fit
 s.replot = 0
 #fit model
 s.choose_model("EBV_model2", stype="st")
-print "Performing SNpy fit and conversion of LC to rest frame"
+print("Performing SNpy fit and conversion of LC to rest frame")
 s.fit(band)
 Flim = Mlim
 for i in range(len(F)):
@@ -71,13 +71,13 @@ for i in range(len(F)):
     #get Max centered dilated time
     t[i] = absTime(t[i]-s.Tmax, z)
 
-print "Converting early LC to rest frame normalized luminosity"
+print("Converting early LC to rest frame normalized luminosity")
 #scale luminosity as fraction of max lum
 L_err = [l/maxes[i] for i, l in enumerate(F_err)]
 L = [l/maxes[i] for i, l in enumerate(F)]
 Llim = [l/maxes[i] for i, l in enumerate(Flim)]
 
-print "plotting early data"
+print("plotting early data")
 #plot
 f, ax = plt.subplots(3, sharex=True)
 ax[-1].set_xlabel("t rest [days]")
@@ -92,7 +92,7 @@ for i in range(len(t)):
 plt.show()
 
 
-print "Fitting power law to section of early light curve"
+print("Fitting power law to section of early light curve")
 #for each band crop to right section
 f = 0.52
 t = [time[L[i]<f] for i, time in enumerate(t)]
@@ -140,10 +140,10 @@ a_err = [err_x[4],err_x[5],err_x[6]]
 LT = [earlyFit(tT,t0,C[0],a[0]),earlyFit(tT,t0,C[1],a[1]),earlyFit(tT,t0,C[2],a[2])]
 x2dof = np.sqrt(np.square(earlyMultiErr(x, t, L, L_err)).sum())/(len(L[0])+len(L[1])+len(L[2])-len(x))
 
-print "Epoch:", t0, t0_err
-print "Coefficient", C, C_err
-print "Power:", a, a_err
-print "Fit Chi2", x2dof
+print("Epoch:", t0, t0_err)
+print("Coefficient", C, C_err)
+print("Power:", a, a_err)
+print("Fit Chi2", x2dof)
 
 #plot fit
 for i in range(len(t)):

@@ -194,8 +194,8 @@ def SkyFit(image, x0, y0, fitsky, fwhm=5.0, sat=40000.0, verbosity=0):
                 for j in np.arange(y1, y2):
                     I_t[j][i] = D2plane((i, j),*skypopt)
             print("Plotting sky planar fit residual")
-            print("Plotting image at x:", x1, x2)
-            print("Plotting image at y:", y1, y2)
+            print(("Plotting image at x:", x1, x2))
+            print(("Plotting image at y:", y1, y2))
             sb = image[y1:y2,x1:x2]-I_t[y1:y2,x1:x2]
             sbmax = 5*skyN
             sbmin = -5*skyN
@@ -210,9 +210,9 @@ def SkyFit(image, x0, y0, fitsky, fwhm=5.0, sat=40000.0, verbosity=0):
         raise PSFError('Sky fitting catastrophic failure.')
     if verbosity > 0:
         print("sky plane fit parameters")
-        print("[a, b, c] = "+str(skypopt))
-        print("errors = "+str(skyperr))
-        print("Noise = "+str(skyN))
+        print(("[a, b, c] = "+str(skypopt)))
+        print(("errors = "+str(skyperr)))
+        print(("Noise = "+str(skyN)))
     #return sky plane, sky noise, and goodness of fit
     return skypopt, skyperr, skyX2dof, skyN
 
@@ -301,10 +301,10 @@ def PSFextract(image, x0, y0, fwhm=5.0, fitsky=True, sat=40000.0, verbosity=0):
     
     if verbosity > 0:
         print("PSF moffat fit parameters")
-        print("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt))
-        print("parameter errors = "+str(PSFperr))
-        print("Chi2 = "+str(X2dof))
-        print("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy]))
+        print(("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt)))
+        print(("parameter errors = "+str(PSFperr)))
+        print(("Chi2 = "+str(X2dof)))
+        print(("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy])))
         
     #graph fits if verbosity is high enough
     if verbosity > 1:
@@ -394,10 +394,10 @@ def PSFfit(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
         X2dof = 0
     if verbosity > 0:
         print("PSF moffat fit parameters")
-        print("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt))
-        print("parameter errors = "+str(PSFperr))
-        print("Chi2 = "+str(X2dof))
-        print("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy]))
+        print(("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt)))
+        print(("parameter errors = "+str(PSFperr)))
+        print(("Chi2 = "+str(X2dof)))
+        print(("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy])))
 
     #graph fits if verbosity is high enough
     if verbosity > 1:
@@ -476,10 +476,10 @@ def PSFscale(image, PSF, PSFerr, x0, y0, fitsky=True, sat=40000.0, verbosity=0):
         X2dof = 0
     if verbosity > 0:
         print("PSF moffat fit parameters")
-        print("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt))
-        print("parameter errors = "+str(PSFperr))
-        print("Chi2 = "+str(X2dof))
-        print("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy]))
+        print(("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt)))
+        print(("parameter errors = "+str(PSFperr)))
+        print(("Chi2 = "+str(X2dof)))
+        print(("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy])))
 
     #graph fits if verbosity is high enough
     if verbosity > 1:
@@ -627,8 +627,8 @@ def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity
             for i in np.arange(x1, x2):
                 for j in np.arange(y1, y2):
                     I_t[j][i] = E2moff_multi((i, j),psftype, given, fitpopt) + D2plane((i, j),*skypopt)
-            print("Plotting image at x:", x1, x2)
-            print("Plotting image at y:", y1, y2)
+            print(("Plotting image at x:", x1, x2))
+            print(("Plotting image at y:", y1, y2))
             sb = image[y1:y2,x1:x2]-I_t[y1:y2,x1:x2]
             sbmax = 5*skyN
             sbmin = -5*skyN
@@ -647,17 +647,17 @@ def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity
         print("Multi-obj best fit parameters")
         for i in range(Nobj):
             if psftype[i][0] != 's':
-                print("Object "+str(i+1)+":")
-                print("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt[i]))
-                print("parameter errors = "+str(PSFperr[i]))
-                print("Chi2 = "+str(X2dof))
+                print(("Object "+str(i+1)+":"))
+                print(("[A,ax,ay,b,theta,X0,Y0] = "+str(PSFpopt[i])))
+                print(("parameter errors = "+str(PSFperr[i])))
+                print(("Chi2 = "+str(X2dof)))
                 FWHMx, FWHMy = E2moff_toFWHM(PSFpopt[i][1], PSFpopt[i][2], PSFpopt[i][3])
-                print("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy]))
+                print(("[FWHMx', FWHMy]' = "+str([FWHMx, FWHMy])))
             else:
-                print("Object "+str(i+1)+":")
-                print("[Ie,re,n,X0,Y0,e,theta] = "+str(PSFpopt[i]))
-                print("parameter errors = "+str(PSFperr[i]))
-                print("Chi2 = "+str(X2dof))
+                print(("Object "+str(i+1)+":"))
+                print(("[Ie,re,n,X0,Y0,e,theta] = "+str(PSFpopt[i])))
+                print(("parameter errors = "+str(PSFperr[i])))
+                print(("Chi2 = "+str(X2dof)))
 
     #graph fits if verbosity is high enough
     if verbosity > 1:
@@ -671,8 +671,8 @@ def PSFmulti(image, PSF, PSFerr, psftype, x0, y0, fitsky, sat=40000.0, verbosity
             if not E2moff_verify(PSFpopt[i], x0[i], y0[i]):
                 ridic = True
                 if verbosity > 0:
-                    print("Bad PSF: Object "+str(i+1))
-                    print(dist(PSFpopt[i][5],PSFpopt[i][6],x0[i],y0[i]))
+                    print(("Bad PSF: Object "+str(i+1)))
+                    print((dist(PSFpopt[i][5],PSFpopt[i][6],x0[i],y0[i])))
     if not ridic:
         #None of the fits were ridiculous
         return PSFpopt, PSFperr, X2dof, skypopt, skyN
@@ -890,7 +890,7 @@ def PSF_photometry(image, x0, y0, PSFpopt, PSFperr, psftype, skypopt, skyN, verb
     #output information
     if verbosity > 0:
         print("\n")
-        print("signal to noise: "+str(SNo))
+        print(("signal to noise: "+str(SNo)))
         print("\n")
     
     #return intensity, and signal to noise
@@ -932,8 +932,8 @@ def Ap_photometry(image, x0, y0, skypopt, skyN, radius=None, PSF=None, fitsky=Tr
     
     if verbosity > 0:
         print("\n")
-        print("Signal to noise: "+str(SNo))
-        print("Pixel aperture radius: "+str(radius))
+        print(("Signal to noise: "+str(SNo)))
+        print(("Pixel aperture radius: "+str(radius)))
         print("\n")
 
     #graph photometry if verbosity is high enough

@@ -22,7 +22,7 @@ m_c = m_ej/1.4
 m_c_err = m_ej_err/1.4
 plot = False #plot polynomial fits to light curves
 
-print "Loading binned early light curve."
+print("Loading binned early light curve.")
 #get binned light curve
 t, M, M_err, F, SN, Mlim = LCload(binfiles, tcol=0, magcols=7, errcols=8, fluxcols=5, SNcols=6, limcols=9, SNthres=-10.0, scols=10, flags=['-99.99999'], mode='multi')
 #get noise in flux
@@ -33,7 +33,7 @@ for i in range(len(M)):
     t[i], M[i], M_err[i], F[i], SN[i], Mlim[i] = LCcrop(t[i], t1_early, t2_early, M[i], M_err[i], F[i], SN[i], Mlim[i])
 
 #deredden flux and shift light curves
-print "Correcting for galactic reddening"
+print("Correcting for galactic reddening")
 Flim = []
 for i in range(len(F)):
     #correct fluxes for galactic reddening
@@ -50,11 +50,11 @@ for i in range(len(F)):
 
 ###################################################################
 
-print "Trial thetas:", np.linspace(0,180,10)
+print("Trial thetas:", np.linspace(0,180,10))
 tk = np.arange(0.001, 7, 0.001)
 Fks = [[],[],[]]
 
-print "Computing 1Ms RG Kasen model"
+print("Computing 1Ms RG Kasen model")
 M_comp = 1.0/1.4 #Mchandra
 a13 = 2.0 #10^13cm
 #plot comparison
@@ -77,7 +77,7 @@ for i in range(len(t)):
     ax[i].scatter(t[i], Flim[i], marker='v', c='r')
 plt.show()
 
-print "Computing 6Ms MS Kasen model"
+print("Computing 6Ms MS Kasen model")
 M_comp = 6.0/1.4 #Mchandra
 a13 = 0.2 #10^13cm
 #plot comparison
@@ -101,7 +101,7 @@ for i in range(len(t)):
     ax[i].scatter(t[i], Flim[i], marker='v', c='r')
 plt.show()
 
-print "Computing 2Ms MS Kasen model"
+print("Computing 2Ms MS Kasen model")
 M_comp = 2.0/1.4 #Mchandra
 a13 = 0.05 #10^13cm
 #plot comparison
@@ -125,7 +125,7 @@ for i in range(len(t)):
     ax[i].scatter(t[i], Flim[i], marker='v', c='r')
 plt.show()
 
-print "Plotting zero theta models"
+print("Plotting zero theta models")
 #Make plot of zero theta models over light curve
 f, ax = plt.subplots(len(t), sharex=True) 
 ax[-1].set_xlabel("Days since first light", fontsize=16)

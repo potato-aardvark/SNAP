@@ -43,9 +43,9 @@ for i in range(len(bands)):
     files = sorted(glob('../raw/'+prefix+bands[i]+'*.fits'))
     N = len(files)
     for n, filename in enumerate(files):
-        print ""
-        print "Performing image subtraction on file "+str(n+1)+"/"+str(N)
-        print filename
+        print("")
+        print("Performing image subtraction on file "+str(n+1)+"/"+str(N))
+        print(filename)
         #output filename
         diffname = '.'.join(filename.split('.')[:-1])+".diff.fits"
         diffname = '../diff/'+'/'.join(diffname.split('/')[2:])
@@ -58,9 +58,9 @@ for i in range(len(bands)):
 
         #subtract if not already subtracted
         if os.path.exists(diffname) and os.path.exists(convname):
-            print "Already subtracted "+filename
+            print("Already subtracted "+filename)
         else:
-            print "Subtracting "+filename
+            print("Subtracting "+filename)
             #retrieve parameters from image
             Mtest = True
             try: #try to load image
@@ -71,34 +71,34 @@ for i in range(len(bands)):
                 Mtest = False
                 so = "FITS_ERROR"
                 to = 0
-                print "Critical error loading image!"
+                print("Critical error loading image!")
             if Mtest:
                 try:
-                    print "Extracting psf"
+                    print("Extracting psf")
                     PSF, PSFerr, Med, Noise = magnitude(image, image, wcs, cattype, catname, (ra,dec), radius=size, psf=1, name=name, band=band, fwhm=5.0, limsnr=SNRnoise, satmag=satlvl, refmag=rellvl, fitsky=True, satpix=satpix, verbosity=0, diagnosis=True)
                     #print image fwhm
                     fwhm = np.mean(E2moff_toFWHM(*PSF[:-1]))
-                    print "Image fwhm", fwhm
+                    print("Image fwhm", fwhm)
                     if fwhm == 0:
                         raise PSFError('Unable to perform photometry on reference stars.')
                     #image size
                     imx = image.shape[1]
                     imy = image.shape[0]
-                    print ""
-                    print "Performing subtraction, generating files"
-                    print diffname
-                    print convname
+                    print("")
+                    print("Performing subtraction, generating files")
+                    print(diffname)
+                    print(convname)
                     make_diff_image(filename, refs[i], diffname, convname,
                                     tmp_fwhm=ref_fwhms[i], src_fwhm=fwhm,
                                     imx=imx, imy=imy, tmpdir="DITemp"+str(n))
                 
                 except PSFError:
                     Mtest = False
-                    print "PSF can't be extracted!"
-                    print "Not performing subtraction."
+                    print("PSF can't be extracted!")
+                    print("Not performing subtraction.")
                 except: #General catastrophic failure
                     Mtest = False
-                    print "Unknown catastrophic failure!"
-                    print "Not performing subtraction."
+                    print("Unknown catastrophic failure!")
+                    print("Not performing subtraction.")
                 
 

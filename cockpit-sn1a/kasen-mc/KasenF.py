@@ -25,7 +25,7 @@ from ObjData import *
 m_c = m_ej/1.4 #*1.4 Mchandra
 m_c_err = m_ej_err/1.4
 
-print "loading binned data"
+print("loading binned data")
 #load binned early LC
 t, M, M_err, F, SN, Mlim = LCload(files, tcol=0, magcols=7, errcols=8, fluxcols=5, SNcols=6, limcols=9, SNthres=-10.0, scols=10, flags=['-99.99999'], mode='multi')
 #get noise in flux
@@ -41,11 +41,11 @@ for i in range(len(limSNs)):
     #crop to relevant window
     for j in range(len(t)):
         tc[j], Mlimc[j] = LCcrop(tc[j], t1_early, t2_early, Mlimc[j])
-        print len(Mlimc[j])
+        print(len(Mlimc[j]))
     limconf.append(Mlimc)
 
 #deredden flux and shift light curve
-print "Correcting for galactic reddening"
+print("Correcting for galactic reddening")
 flimconf = np.copy(limconf)
 for i in range(len(t)):
     #correct fluxes for galactic reddening
@@ -63,17 +63,17 @@ for i in range(len(t)):
 
 ###################################################################
 
-print "Computing viewing angles at each separation distance"
+print("Computing viewing angles at each separation distance")
 #list of sample a13 models
 a13s = np.concatenate((np.arange(0.001,0.05,0.001), np.arange(0.05,0.2,0.01), np.arange(0.2, 2.0, 0.01), np.arange(2.0,10.1,0.1)))
 #list of viewing angles
 thetas = np.linspace(0,180,100)
 #SNR of 1, 2, 3, 4, 5
 confs = [norm.cdf(sn) for sn in limSNs]
-print "Confidence levels:",confs
-print "Sigma levels:",limSNs
-print "Trial a13s:", a13s
-print "Trial thetas:",thetas
+print("Confidence levels:",confs)
+print("Sigma levels:",limSNs)
+print("Trial a13s:", a13s)
+print("Trial thetas:",thetas)
 
 #for each confidence interval
 for n, conf in enumerate(confs):
@@ -83,7 +83,7 @@ for n, conf in enumerate(confs):
     sig = norm.ppf(conf)
     #for each a13 model
     for j, a13 in enumerate(a13s):
-        print "Testing model at a13:",a13
+        print("Testing model at a13:",a13)
         #boolean mask for whether angle is ruled out to given confidence
         mask = np.array([True]*len(thetas))
         #for each band
@@ -98,14 +98,14 @@ for n, conf in enumerate(confs):
                 #check if any points rule out angle with conf
                 level = F[i] + sig*F_err[i]
                 #if not above limit at this conf, replace with limit
-                print len(level), len(flimconf[n][i])
+                print(len(level), len(flimconf[n][i]))
                 level[level < flimconf[n][i]] = flimconf[n][i][level < flimconf[n][i]]
                 if any(Fk > level):
                     #ruled out
                     mask[k] = False
                 else:
                     #not ruled out
-                    print "Consistent!", a13, conf, theta
+                    print("Consistent!", a13, conf, theta)
         
         """
         #Diagnostic
@@ -129,8 +129,8 @@ for n, conf in enumerate(confs):
         #At this confidence level, we rule out some angles at each a13
         outangles[j] = 180.0*float(len(thetas)-len(thetas[mask]))/len(thetas)
     #At this conf, we can plot ruled out angles vs a13
-    print "Confidence level:",conf
-    print "Angles ruled out at each a13:",outangles
+    print("Confidence level:",conf)
+    print("Angles ruled out at each a13:",outangles)
     if limSNs[n] in plot:
         plt.plot(a13s, outangles, style[plot[limSNs[n]]])
 plt.xlim(0,10.0)

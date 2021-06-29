@@ -154,7 +154,7 @@ def BVcorrectMag(ts, mags, errs, interp='GP', Bcol=0, Vcol=1, mBVr=0, mBVrerr=0)
     #correct B band using Bout = (Bout-Vin)*c + Bin
     Bin, Bin_err = mags[Bcol], errs[Bcol]
     if Sinterp == 'GP':
-        from SEDAnalysis import SEDinterp
+        from .SEDAnalysis import SEDinterp
         #Construct V band Gaussian Process interpolator
         gp = SEDinterp(ts[Vcol][0], ['V'], [ts[Vcol]],
                        [mags[Vcol]], [errs[Vcol]], retGP=True)[0]

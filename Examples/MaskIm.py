@@ -38,10 +38,10 @@ imsize = np.mean(image.shape)
 #lower limit:
 llim = Med - 10*Noise
 
-print ""
-print "Image FWHM =",fwhm
-print "Lower limit of valid counts =",llim
-print ""
+print("")
+print("Image FWHM =",fwhm)
+print("Lower limit of valid counts =",llim)
+print("")
 
 crmask, cleanarr = detect_cosmics(image, readnoise=Noise, satlevel=reflims[i], psffwhm=fwhm, psfsize=2.5*fwhm)
 

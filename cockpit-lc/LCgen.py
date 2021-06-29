@@ -64,9 +64,9 @@ outIname = name+'.I.'+suffix
 
 #generate output files if they don't already exist
 if os.path.exists(outBname) and os.path.exists(outVname) and os.path.exists(outIname):
-    print "Continuing "+outBname
-    print "Continuing "+outVname
-    print "Continuing "+outIname
+    print("Continuing "+outBname)
+    print("Continuing "+outVname)
+    print("Continuing "+outIname)
     #load list of already processed files
     fB_done = np.loadtxt(outBname, dtype=str, comments=';', usecols=[1])
     fV_done = np.loadtxt(outVname, dtype=str, comments=';', usecols=[1])
@@ -74,9 +74,9 @@ if os.path.exists(outBname) and os.path.exists(outVname) and os.path.exists(outI
     f_done = [fB_done, fV_done, fI_done]
     outs = [outBname, outVname, outIname]
 else:
-    print "Starting "+outBname
-    print "Starting "+outVname
-    print "Starting "+outIname
+    print("Starting "+outBname)
+    print("Starting "+outVname)
+    print("Starting "+outIname)
     os.system('touch '+outBname)
     os.system('touch '+outVname)
     os.system('touch '+outIname)
@@ -101,15 +101,15 @@ files = sorted(glob('../crop/'+prefix+'*.fits'))
 #generate light curve
 for i in range(len(files)):
     filename = files[i].split('/')[-1]
-    print "Computing file "+str(i+1)+"/"+str(len(files))+": "+filename
+    print("Computing file "+str(i+1)+"/"+str(len(files))+": "+filename)
     #decipher information from KMTNet filename convention
     fo = '.'.join(filename.split('.')[2:5])
     band = fo[0]
 
     if fo in f_done[bindex[band]]:
-        print "Already processed "+fo
+        print("Already processed "+fo)
     else:
-        print "Processing "+fo
+        print("Processing "+fo)
         #compute magnitude
         Mtest = True
         so = "_"
@@ -120,7 +120,7 @@ for i in range(len(files)):
             Mtest = False
             so = "FITS_ERROR"
             to = 0
-            print "Critical error loading image!"
+            print("Critical error loading image!")
 
         if Mtest:
             #get moon ephemeris
@@ -141,10 +141,10 @@ for i in range(len(files)):
                 #################################
                 #This sequence performs fixed PSF photometry for all images,
                 #then followed by psftype-defined PSF photometry if SNR > 3 detected
-                print "Try photometry with fixed centroid."
+                print("Try photometry with fixed centroid.")
                 RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo = magnitude(image, image, wcs, cattype, catname, (ra,dec), radius=size, psf='1', name=name, band=band, fwhm=5.0, limsnr=SNRnoise, satmag=satlvl, refmag=rellvl, fitsky=fitsky, satpix=satpix, verbosity=0)
                 if SNo[0]>SNRnoise:
-                    print "Source is bright, get a better fix on centroid."
+                    print("Source is bright, get a better fix on centroid.")
                     RAo1, DECo1, Io1, SNo1, Mo1, Mo_err1, Mlimo1 = magnitude(image, image, wcs, cattype, catname, (ra,dec), radius=size, psf=psftype, name=name, band=band, fwhm=5.0, limsnr=SNRnoise, satmag=satlvl, refmag=rellvl, fitsky=1, satpix=satpix, verbosity=0)
                     if not any([math.isnan(Io1[0]),math.isinf(Io1[0]),math.isnan(SNo1[0]),math.isinf(SNo1[0])]):
                         #take these if useable
@@ -182,11 +182,11 @@ for i in range(len(files)):
                 RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = -99.9999999, -99.9999999, -99.99999, -99.99, -99.999, -99.999, -99.999
                 so = "PSF_ERROR"
                 Mtest = False
-                print "PSF can't be extracted!"
+                print("PSF can't be extracted!")
             except: #General catastrophic failure
                 RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = -99.9999999, -99.9999999, -99.99999, -99.99, -99.999, -99.999, -99.999
                 Mtest = False
-                print "Unknown catastrophic failure!"
+                print("Unknown catastrophic failure!")
 
         else:
             RAo, DECo, Io, SNo, Mo, Mo_err, Mlimo  = -99.9999999, -99.9999999, -99.99999, -99.99, -99.999, -99.999, -99.999
@@ -202,7 +202,7 @@ for i in range(len(files)):
 
         #format output
         out = rowGen(to,fo,RAo,DECo,Io,SNo,Mo,Mo_err,Mlimo,so)
-        print out+'\n'
+        print(out+'\n')
 
         if band in bands:
             outfile = open(outs[bindex[band]], 'a')

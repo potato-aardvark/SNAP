@@ -24,7 +24,7 @@ def make_crop_image(filename, outname, ra, dec, radius):
     
     #convert position of source to world coordinates
     X, Y = wcs.all_world2pix(ra, dec, 0)
-    print("Source located at: " + str(X) + ", " + str(Y))
+    print(("Source located at: " + str(X) + ", " + str(Y)))
     
     crop = fits.PrimaryHDU()
     xlims = [int(max(X-radius,0)), int(min(X+radius,image.shape[0]))]
@@ -35,7 +35,7 @@ def make_crop_image(filename, outname, ra, dec, radius):
     crop.header.update(wcs[ylims[0]:ylims[1], xlims[0]:xlims[1],].to_header())
     
     print("writing hdu")
-    print("cropped "+outname)
+    print(("cropped "+outname))
     if os.path.exists(outname) : os.remove(outname)
     crop.writeto(outname)
 

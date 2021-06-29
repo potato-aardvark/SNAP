@@ -474,17 +474,17 @@ def limNaID(popt, spec, spec_err=None, r=15, sn=3, z=0, plot=False):
     EW2 = np.trapz(-V2/backg2, wave2)
 
     #convert EW to galactic extinction from Poznanski et al. 2012
-    print "SNR2=", SNR2
-    print "SNR1=", SNR1
-    print "D2: EW =",EW2
-    print "D1: EW =",EW1
+    print(("SNR2=", SNR2))
+    print(("SNR1=", SNR1))
+    print(("D2: EW =",EW2))
+    print(("D1: EW =",EW1))
     EBV2 = np.power(10, 2.16*EW2-1.91)
     err2 = EBV2*np.log(10)*0.15
     EBV1 = np.power(10, 2.47*EW1-1.76)
     err1 = EBV1*np.log(10)*0.17
     #SFD 1998 extinction
-    print "D2: E(B-V) =",np.power(10, 2.16*EW2-1.91),err2
-    print "D1: E(B-V) =",np.power(10, 2.47*EW1-1.76),err1
+    print(("D2: E(B-V) =",np.power(10, 2.16*EW2-1.91),err2))
+    print(("D1: E(B-V) =",np.power(10, 2.47*EW1-1.76),err1))
 
     #plotting the fit
     if plot:

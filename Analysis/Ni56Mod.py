@@ -782,14 +782,14 @@ def predShallowNimod(t, wave, z, DM, taus, t_diff, L_diff, Mej, Ek, beta, x_2, x
         print(("Time when clump exposed", tr[tr<x_s*t_diff][-1]))
         print(("Mass in clump", dM[tr<x_s*t_diff][-1]))
         tspec = 0.9
-        print("Diffusion mass depth when t=0.9", tspec**1.76*(2.0e-2*Ek**0.44)/(k_opt**0.88*Mej**0.32))
+        print(("Diffusion mass depth when t=0.9", tspec**1.76*(2.0e-2*Ek**0.44)/(k_opt**0.88*Mej**0.32)))
 
     #photospheric radius for calculating temperature [cm]
     rph = 3.0e14 * (tr**0.78)*(k_opt**0.11)*(Ek**0.39)/(Mej*1.40)**0.28
     if prnt:
-        print("tau when clump exposed", taus[tr<x_s*t_diff][-1])
-        print("Rphot when clump exposed", rph[tr<x_s*t_diff][-1])
-        print("Rphot when t=0.9", 3.0e14*(tspec**0.78)*(k_opt**0.11)*(Ek**0.39)/(Mej*1.40)**0.28)
+        print(("tau when clump exposed", taus[tr<x_s*t_diff][-1]))
+        print(("Rphot when clump exposed", rph[tr<x_s*t_diff][-1]))
+        print(("Rphot when t=0.9", 3.0e14*(tspec**0.78)*(k_opt**0.11)*(Ek**0.39)/(Mej*1.40)**0.28))
 
     tau_Ni=8.8 #decay time of Ni56 in day
     tau_Co=9.822e6/86400. #decay time of Co56 in day

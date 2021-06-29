@@ -118,9 +118,9 @@ def matchSExPhot(catname, band, refname=None, fitsname=None, pos=None, verbosity
     X2dof = np.sum(np.square((Mfit-magm)/Mfit_err))/(len(Mfit)-2.0)
 
     if verbosity > 1:
-        print("Linear Photmetric Solution: "+str(popt))
-        print("Errors: "+str(perr))
-        print("Fit X2/dof: "+str(X2dof))
+        print(("Linear Photmetric Solution: "+str(popt)))
+        print(("Errors: "+str(perr)))
+        print(("Fit X2/dof: "+str(X2dof)))
         print("Writing photometric fit parameters")
     #get base of catalog name for output
     base = catname[:-4]
@@ -209,20 +209,20 @@ if __name__ == "__main__":
     if args.refname is not None:
         #compute photometric solution
         popt, perr = matchPhot(args.catname, args.band, refname=args.refname, verbosity=args.verbosity)
-        print("Linear Photmetric Solution: "+str(popt))
-        print("Errors: "+str(perr))
+        print(("Linear Photmetric Solution: "+str(popt)))
+        print(("Errors: "+str(perr)))
     elif args.fitsname is not None:
         #compute photometric solution
         popt, perr = matchPhot(args.catname, args.band, fitsname=args.fitsname, verbosity=args.verbosity)
-        print("Linear Photmetric Solution: "+str(popt))
-        print("Errors: "+str(perr))
+        print(("Linear Photmetric Solution: "+str(popt)))
+        print(("Errors: "+str(perr)))
     elif args.position is not None:
         #extract RA, DEC from position argument
         RA, DEC = [float(coord) for coord in args.position.split(':')]
         pos = [RA, DEC]
         #compute photometric solution
         popt, perr = matchPhot(args.catname, args.band, pos=pos, verbosity=args.verbosity)
-        print("Linear Photmetric Solution: "+str(popt))
-        print("Errors: "+str(perr))
+        print(("Linear Photmetric Solution: "+str(popt)))
+        print(("Errors: "+str(perr)))
     else:
         print("Insufficient information to retrieve AAVSO catalog, try -h flag and give one of three optional arguments.")

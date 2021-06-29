@@ -283,8 +283,8 @@ def kasenFixedMultiErr(p, t, L, L_err, z, DM, m_c, e_51, angle):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def kasent0MultiErr(p, t, L, L_err, z, DM, m_c, e_51, t0):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #Kasen component p0=epoch (in rest frame), p1=a13, p2=theta
     B_pred = np.array([KasenFit(ti, p[0], 1.0, wave_0[bands['B']], z,
                                 m_c, e_51, DM, t0)
@@ -476,8 +476,8 @@ def CSMMultiErr(p, t, L, L_err, z, DM, Mej, Eej):
 
 #function: Error function for multi-band early light curve leastsq fitting
 def CSMt0MultiErr(p, t, L, L_err, z, DM, Mej, Eej, t0):
-    from Cosmology import wave_0, bands
-    from LCFitting import earlyFit
+    from .Cosmology import wave_0, bands
+    from .LCFitting import earlyFit
     #CSM component p0=epoch (in rest frame), p1=Mext, p2=Rext
     B_pred = np.array([CSMFit(ti, wave_0[bands['B']], z, DM, Mej, Eej,
                               p[0], p[1], t0) for ti in t[0]])
